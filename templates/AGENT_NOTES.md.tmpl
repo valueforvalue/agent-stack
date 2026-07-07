@@ -1,0 +1,148 @@
+# Agent Memory Bootstrap
+
+This file ships the convention layout for an adopting
+repo's agent-facing working memory. Adopted repos should
+copy this template (via `scripts/init.sh`) and check the
+contents in at session start.
+
+For the contract: see
+[`core/agent-memory.md`](core/agent-memory.md) in the
+framework.
+
+## Layout
+
+```
+.agent-stack/
+├── agent-notes/         # working memory, often gitignored
+│   ├── current-task.md
+│   ├── open-questions.md
+│   └── investigation-log.md
+└── agent-checkpoints/   # durable state, optionally committed
+    ├── state.md
+    ├── decisions.md
+    └── experiences.md
+```
+
+The dotted directory keeps the memory unlisted by default
+in most file trees. Adopters who prefer a non-dotted
+name can rename `.agent-stack/agent-notes/` to
+`docs/agents/agent-notes/` without changing the
+convention's contract.
+
+## Per-file template
+
+### `agent-notes/current-task.md`
+
+```markdown
+# Current task
+
+<!-- One paragraph: what the agent is doing right now,
+     the slice plan, the success criterion. -->
+
+Started: <YYYY-MM-DD>
+Session: <arbitrary agent-side identifier>
+Refs: <issue/PR/ADR>
+```
+
+### `agent-notes/open-questions.md`
+
+```markdown
+# Open questions
+
+<!-- One line each. The agent owes the user a call on
+     these before the slice can land. -->
+
+- [ ] <question>: <why it's blocking>
+- [x] <resolved question>: <answer + source>
+```
+
+### `agent-notes/investigation-log.md`
+
+```markdown
+# Investigation log
+
+<!-- Append-only. Each entry is a brief context dump the
+     agent relies on at session start. -->
+
+## <YYYY-MM-DD HH:MM>
+- Files opened: <paths>
+- Tests run: <commands>
+- Found: <one-line>
+```
+
+### `agent-checkpoints/state.md`
+
+```markdown
+# State
+
+Last updated: <YYYY-MM-DD HH:MM>
+
+## In flight
+- <slice>: <status, e.g. "red tests in pkg/foo.go:42">
+
+## Last green
+- <slice + commit>: <short SHA>
+
+## Blockers
+- <blocker>: <who owns the unblock, when unblock is
+  expected, link to relevant thread>
+
+## Next actions
+- [ ] <next slice or follow-up>
+- [ ] <user-side decision needed>
+```
+
+### `agent-checkpoints/decisions.md`
+
+```markdown
+# Decisions
+
+<!-- One per row. Each cites its source: PR, ADR, chat
+     thread, or commit. Append-only. -->
+
+| Decision | Source | Date |
+|---|---|---|
+| <one-sentence> | <link> | <YYYY-MM-DD> |
+```
+
+### `agent-checkpoints/experiences.md`
+
+```markdown
+# Experiences
+
+<!-- Bugs the agent hit that the next agent must not
+     re-discover. Append-only. Each entry: symptom, why,
+     fix. -->
+
+## <YYYY-MM-DD>: <slug>
+**Symptom:** <one line>
+**Why:** <file:line + one-line mechanism>
+**Fix:** <the change that resolved it>
+**Cite:** <issue/ADR/commit>
+
+```
+
+## Adopting
+
+The `scripts/init.sh` script Q5 does not yet create this
+directory; until Slice 2 ships that hook, create the
+layout manually:
+
+```bash
+mkdir -p .agent-stack/agent-notes .agent-stack/agent-checkpoints
+# Add .agent-stack/agent-notes/ to .gitignore
+# Create the per-file templates above
+```
+
+The convention is unenforceable without the directory
+existing; the templates above are what the agent reads
+when it sits down at a fresh session.
+
+## References
+
+- [`core/agent-memory.md`](core/agent-memory.md) — the
+  full contract
+- [`core/subagent-pattern.md`](core/subagent-pattern.md) —
+  how subagent delegation interacts with this layout
+- [`core/session-protocol.md`](core/session-protocol.md) —
+  when to checkpoint
