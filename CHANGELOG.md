@@ -64,3 +64,57 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
 - v0.1.0 audit net: `bash scripts/check-core-stack-agnostic.sh`
   exits 0; `bash scripts/init.sh <scratch>` + repeat is visibly
   idempotent; `--uninit` reverses cleanly.
+
+### Added (v0.1.1 — research-backed upgrades)
+
+Seven commits adopt findings from the 2024-2026 empirical
+literature on LLM coding agents. Each adds inline
+citations to its source.
+
+- `core/bug-patterns.md` — 7 new AI-amplified categories
+  (authorization/intent gap, hallucinated APIs,
+  re-implementing stdlib, repeated code, silent error
+  suppression, concurrency/dependency correctness,
+  intent/business-logic mismatch) plus CWE/OWASP mapping
+  table at the top. Sources: Tambon et al. 2024, DAPLab 9
+  failure patterns, CodeRabbit AI vs Human report, OWASP
+  Top 10:2025, MITRE CWE Top 25 (2025), OWASP LLM Top 10.
+- `addenda/go-htmx.md` — 5 HTMX-specific guard tests
+  (route-table integrity both directions, response-shape
+  contract, swap-scope re-binding per HTMX #3300, OOB
+  target integrity, route-order wildcard ordering).
+  Sources: Innei/LobeHub migration field report, HTMX
+  issue #3300.
+- `core/laws.md` — two new universal laws: agent-context
+  files hand-curated (ETH Zurich 2602.11988 + Princeton);
+  Tier-0 docs have a size ceiling (Codex 32 KiB cap,
+  Anthropic 20-30 line guidance).
+- `core/docs-index-scheme.md` — formal 3-tier model with
+  token budgets (<2K tier-0, ~5K tier-1/role, unbounded
+  tier-2) and prompt-cache alignment.
+- `core/rpci.md` — mandatory critique sub-step between
+  GREEN and commit (deletion test + noise test + scope
+  test). Skip only for one-line bug fixes.
+- `core/feature-protocol.md` — slice-size rules:
+  ≤50% context, <500 LOC diff, one observable behaviour,
+  fresh context per slice. Sources: Pocock aihero.dev,
+  Miller jeremydmiller.com, CodeRabbit PR audit.
+- `core/subagent-pattern.md` — new tier-1 doc. When to
+  delegate to subagent vs inline; manifest schema; the
+  verifier-subagent pattern.
+- `core/adr-discipline.md` — new tier-1 doc. Append-only
+  ADRs modelled on Vercel ai + Living ADR pattern.
+- `core/agent-memory.md` — new tier-1 doc. CHECKPOINT /
+  REHydrate pattern; `agent-notes/` + `agent-checkpoints/`
+  layout.
+- `templates/AGENTS.md.tmpl` — rewritten per Roland Huss
+  separation-of-concerns; 20-30 line ceiling; Claude Code
+  `@import` convention.
+- `templates/AGENT_NOTES.md.tmpl` — bootstrap template for
+  the memory layout.
+- `core/README.md` — index updated to list the new tier-1
+  docs.
+
+Regression net: `bash scripts/check-core-stack-agnostic.sh`
+still exits 0; `bash scripts/init.sh /tmp/x --dry-run`
+walks the interactive flow without errors.
