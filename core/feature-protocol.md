@@ -53,6 +53,32 @@ regression net running green.
 previous commit is green AND the user has seen the working
 surface. A fresh context window for each slice is ideal.
 
+**Slice-size rules.** A slice is valid iff all of the
+following hold. Cite: [Pocock on tracer bullets](https://www.aihero.dev/tracer-bullets)
+("context window constraints make the discipline
+non-negotiable") and
+[Miller on the codebase as the prompt](https://jeremydmiller.com/2026/06/04/the-codebase-is-the-prompt-wolverine-vertical-slices-and-ai-assisted-development/)
+("a slice must fit entirely in one context window").
+
+- The slice's full file set loads into ≤ 50% of the model's
+  effective context. If you can't quote every file you'll
+  touch from memory, the slice is too big.
+- The diff stays under 500 LOC. Above that, the diff
+  becomes unreviewable and the acceptance test becomes a
+  smoke test rather than a behavioural assertion.
+- Each slice has exactly one observable end-to-end user
+  behaviour. "Refactor + new feature" is two slices.
+- Slice starts in a fresh context. Prior session's working
+  memory contaminates plan-vs-implementation reasoning;
+  the green/red signal is sharper in a clean window.
+
+These rules are descriptive of successful slices in
+practice (per [CodeRabbit's PR audit](https://coderabbit.ai/blog/state-of-ai-vs-human-code-generation-report),
+AI PRs above 500 LOC have 1.7× the issue density of
+human PRs). Treat them as a heuristic, not a law — but
+violating them in a slice plan needs justification in the
+plan body.
+
 ## The 3-tier commit rule
 
 One commit = one of:

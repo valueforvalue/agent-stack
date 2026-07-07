@@ -170,12 +170,33 @@ back-to-back is the AI-slop failure mode.
 4. Run the targeted test + the package's full short suite.
 5. Run smoke probes that touch the area.
 6. Update CHANGELOG.
-7. Commit. Subject per Conventional Commits prefix + area
+7. **Critique sub-step (mandatory before commit).** Before
+   committing, run the *self-review pass*: enumerate three
+   things that could be wrong with this slice.
+   - Run the *deletion test*: would removing this code
+     break the acceptance criterion? If no, the
+     implementation does not match the spec
+     (*intent mismatch*, DAPLab #3).
+   - Run the *noise test*: does this slice introduce
+     unmotivated complexity? Naming, indirection, or
+     abstractions no caller needs? Per [Pocock](https://www.aihero.dev/tracer-bullets),
+     AI agents routinely ship "while-I'm-here" code that
+     solves no stated problem.
+   - Run the *scope test*: does this slice touch code
+     outside its stated scope? If yes, split or drop it.
+   The critique sub-step is non-negotiable for any slice
+   that adds more than one file. Skip it only for
+   one-line bug fixes with clear repro. Per
+   [Stellman](https://www.oreilly.com/radar/ai-code-review-only-catches-half-of-your-bugs/),
+   ~50% of LLM-introduced defects are *intent violations*
+   that structural review misses; this sub-step is the
+   cheap equivalent of an adversarial review pass.
+8. Commit. Subject per Conventional Commits prefix + area
    + imperative summary; body explains *why* and references
    the issue.
-8. Push branch + open PR (target integration branch).
-9. Watch CI. Hand the merge back to the user; don't
-   auto-merge.
+9. Push branch + open PR (target integration branch).
+10. Watch CI. Hand the merge back to the user; don't
+    auto-merge.
 
 ## Anti-patterns
 
