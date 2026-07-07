@@ -1,9 +1,9 @@
 # agent-stack
 
 A drop-in framework of agent conventions, code-change contracts,
-bug patterns, and tooling for AI-coding-assisted repos. Borrowed
-from a year of working on a Go + HTMX + templ + Wails app
-(DixieData), generalized for any language or stack.
+bug patterns, and tooling for AI-coding-assisted repos. Generalised
+from real-world use on a Go + HTMX + templ + Wails app, applicable
+to any language or stack via addenda.
 
 ## What you get
 

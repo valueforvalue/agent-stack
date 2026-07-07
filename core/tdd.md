@@ -39,7 +39,8 @@ probe because the probe only checks the slice's own outcome.
 
 **RED test:** smoke probe that clicks the trigger, waits
 50–200ms, then asserts the panel is still in the expected
-state. For WebView2 / Electron hosts, the 50ms window is the
+state. For native-host runtimes (webview hosts, Electron,
+Tauri, etc.) the 50ms window is the
 right delay — the event loop is slower than headless Chromium.
 
 ### 3. Orphan handler / response-shape mismatch
@@ -132,7 +133,8 @@ the failure mode where the JS calls a real method that
 quietly early-returns.
 
 Exception: when the service itself depends on a hard-to-
-fake boundary (native dialog, WebView2, native API), mock
+fake boundary (native dialog, host runtime, native
+API), mock
 the boundary, not the service.
 
 ## Per-layer recipes

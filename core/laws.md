@@ -16,10 +16,9 @@ should cite its origin (issue number, commit hash, ADR).
 If a UI operation opens a native dialog, modal, file picker,
 or any other re-entrant surface, **a second invocation while
 the first is still open must be rejected before it reaches
-the host**. The Wails WebView2 crash history (see
-`addenda/go-htmx.md`) is the canonical example; the principle
-generalizes to every host that runs UI work on a single
-thread (Electron, Tauri, Qt, GTK, Win32 native, Cocoa).
+the host**. The principle applies to every host that runs
+UI work on a single thread (Electron, Tauri, Qt, GTK, Win32
+native, Cocoa, etc.).
 
 Implementation contract:
 
@@ -30,6 +29,9 @@ Implementation contract:
   collapse duplicate clicks on the same button.
 - The slot is released AFTER the dialog returns, never
   before. Releasing early re-opens the race.
+
+See the addendum that owns the host stack for the canonical
+crash history and worked guard templates.
 
 ### Doc comments on exported identifiers
 

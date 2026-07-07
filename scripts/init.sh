@@ -95,9 +95,7 @@ copy_if_missing() {
   local src="$1"
   local dst="$2"
   if [[ -f "$dst" ]]; then
-    if [[ "$DRY_RUN" == "1" ]]; then
-      echo "  [skip] $dst (already exists)"
-    fi
+    echo "  [skip] $dst (already exists)"
     return 0   # 0 = no-op (file exists); callers don't need to gate
   fi
   if [[ "$DRY_RUN" == "1" ]]; then
@@ -114,9 +112,7 @@ copy_dir_if_missing() {
   local src="$1"
   local dst="$2"
   if [[ -d "$dst" ]]; then
-    if [[ "$DRY_RUN" == "1" ]]; then
-      echo "  [skip] $dst (already exists)"
-    fi
+    echo "  [skip] $dst (already exists)"
     return 0
   fi
   if [[ "$DRY_RUN" == "1" ]]; then
@@ -200,7 +196,10 @@ Q4_ADDENDA=$(ask "Addenda" "$Q4_DEFAULT")
 echo
 echo "Question 5/6: Which bundled skills to include?"
 echo "  Comma-separated list of skill names from SKILLS.md manifest."
-echo "  Default: none (you can copy them later with scripts/dedupe-skills.sh)"
+echo "  Default: none. Slice 2 of PLAN.md ships skill bodies; until"
+echo "  then, selecting a skill name will emit a warning and copy nothing."
+echo "  See skills/SKILLS.md for the manifest and dedupe-skills.sh"
+echo "  to detect overlap with your installed skill catalog."
 Q5_SKILLS=$(ask "Bundled skills" "none")
 
 echo
@@ -283,7 +282,9 @@ if [[ -n "$Q5_SKILLS" && "$Q5_SKILLS" != "none" ]]; then
     if [[ -f "$src" ]]; then
       copy_if_missing "$src" "$TARGET/.pi/skills/${skill}/SKILL.md"
     else
-      echo "  [warn] skill body $skill not found at $src (Slice 2 will fill these)"
+      echo "  [warn] skill body $skill not shipped in v0.1.0 (Slice 2 of PLAN.md will add it)"
+      echo "         manifest entry: skills/SKILLS.md ($skill)"
+      echo "         skipping — re-run init.sh after upgrading to a Slice 2 release"
     fi
   done
 else

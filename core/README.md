@@ -44,7 +44,7 @@ doc. Load only the one that matches the target stack.
 
 - Bug patterns that name a specific framework (HTMX, React,
   Django, Rails, etc.) → `../addenda/<stack>.md`
-- Vendor-specific crash histories (Wails WebView2, Chrome
-  flags, etc.) → the addendum that owns the stack
+- Vendor-specific crash histories (specific host-runtime
+  bugs, browser flags, etc.) → the addendum that owns the stack
 - Project-specific terminology → the adopting repo's
   `CONTEXT.md`

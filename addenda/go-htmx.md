@@ -166,22 +166,22 @@ catches this.
 ### Route registration order
 
 The chi router walks the route table in registration order;
-specific paths must come before wildcards (`/soldiers/search`
-before `/soldiers/*`). A route guard test catches
+specific paths must come before wildcards (`/records/search`
+before `/records/*`). A route guard test catches
 re-orderings that violate this.
 
 ### Redirect contract for click-driven forms
 
-The custom dispatcher (`dispatchDixieDataForm` in
+The custom dispatcher (`dispatchAppForm` in
 `frontend/app.js`) replaces the legacy parallel `request()`
-function. Handlers return `200 OK + X-DixieData-Redirect`,
+function. Handlers return `200 OK + X-App-Redirect`,
 the dispatcher reads the header, and `window.location.assign()`
-navigates the user. Templates use `data-dixie-submit` +
+navigates the user. Templates use `data-app-submit` +
 `action=` (instead of `hx-post` / `hx-put` / `hx-delete` for
 click-driven forms).
 
 **New handlers keep forgetting the contract.** The
-`X-DixieData-Redirect` header must be set BEFORE the response
+`X-App-Redirect` header must be set BEFORE the response
 body is written. Use the `writeExportRedirect(w, ...)` helper
 to enforce this.
 
@@ -387,7 +387,7 @@ grep -n 'http.Redirect\|http.Error' internal/appshell/lifecycle.go
 ```
 
 **Fix:** Detect `HX-Request: true` in each blocked branch
-and return `204 No Content` with `X-DixieData-Redirect`
+and return `204 No Content` with `X-App-Redirect`
 pointing at the destination page.
 
 #### 1.9 [REGRESSION-PRONE] POST-then-navigate handler must use the redirect contract
@@ -398,7 +398,7 @@ page and re-clicks, producing duplicate work.
 
 **Why:** Handler returns 200 + toast header but forgets to
 call `writeExportRedirect(w, ...)` or set
-`X-DixieData-Redirect` directly.
+`X-App-Redirect` directly.
 
 **Find it:**
 ```bash
@@ -444,12 +444,13 @@ timezone offset.
 
 #### 2.4 `00` day sentinel handling
 
-**Symptom:** Birth date "1923-00-00" renders as "January 0,
-1923" or "N/A" instead of just "1923".
+**Symptom:** Partial date like "2024-00-00" (year + month,
+day unknown) renders as "January 0, 2024" or "N/A" instead
+of just "January 2024".
 
-**Why:** Many records have partial dates recorded with
-day=00 meaning "unknown day". The formatters don't always
-skip the day gracefully.
+**Why:** Records with partial dates use day=00 as the
+"unknown day" sentinel. The formatters don't always skip
+the day gracefully.
 
 **Fix:** Detect `day==0` and render year-only.
 
@@ -675,7 +676,7 @@ em-dash, smart quotes) as mojibake (`â€¦`, `â€"`).
 **Why:** Chromium's WHATWG Fetch decodes HTTP/1.x response
 headers as Windows-1252 by default.
 
-**Fix:** Route every `X-DixieData-Toast` write through a
+**Fix:** Route every `X-App-Toast` write through a
 `sanitiseToastForHeader` helper that translates polished
 Unicode to ASCII twins at the header boundary. Source keeps
 the polished characters.
@@ -701,21 +702,21 @@ console is clean.
 **Why:** Wails serves raw `frontend/index.html` as the
 initial document. htmx fires the load request with
 `HX-Request: true`. If the server is in a blocked state, it
-writes `204 + X-DixieData-Redirect`. htmx receives a 204,
+writes `204 + X-App-Redirect`. htmx receives a 204,
 does not swap, and the body stays empty.
 
 **Fix:** Add an `htmx:afterRequest` listener that reads
-`X-DixieData-Redirect` from any 204 response and calls
+`X-App-Redirect` from any 204 response and calls
 `window.location.assign(redirect)`. Single hook covers all
 blocked states.
 
 #### 4.17 Open handle in data dir blocks restore
 
-**Symptom:** A `.ddbak` (or analog backup) restore fails
-with `Access is denied` when DixieData.exe has
+**Symptom:** A `.appbak` (or analog backup) restore fails
+with `Access is denied` when the host binary has
 `jobs.jsonl` open inside the data dir.
 
-**Why:** DixieData.exe holds the handle alive for the
+**Why:** The host binary holds the handle alive for the
 lifetime of the process. On Windows, an open handle on any
 descendant file blocks the parent directory's rename.
 
@@ -779,8 +780,8 @@ FTS row and inserts the new one.
 
 #### 6.2 Normalization mismatch
 
-**Symptom:** Filtering by state="Virginia" returns results
-for "VA" too, but not for " virginia" (with leading space).
+**Symptom:** Filtering by state="California" returns results
+for "CA" too, but not for " california" (with leading space).
 
 **Why:** Filter doesn't normalize before comparing.
 
