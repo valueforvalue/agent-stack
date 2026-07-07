@@ -1,0 +1,53 @@
+# AGENTS.md
+
+Working notes for AI coding agents operating in this
+repository.
+
+## Project-specific instructions
+
+<!-- Replace this block with project-specific guidance:
+     - Domain vocabulary (link to glossary)
+     - File map (entry points)
+     - Build commands
+     - Test commands
+     - Anything the agent must know at session start
+-->
+
+## Agent conventions
+
+This repo adopts the [agent-stack](https://github.com/<your-org>/agent-stack)
+framework. The framework's `core/` docs (in this repo at
+`vendor/agent-stack/core/`, or installed via the init script
+under `docs/agents/`) carry the stack-agnostic rules. This
+file adds the project-specific guidance that sits alongside
+those rules.
+
+## Commit and branch policy
+
+See `docs/agents/commit-and-branch.md` (or the bundled copy
+at `vendor/agent-stack/core/commit-and-branch.md`).
+
+## Bugs
+
+See `docs/agents/bug-patterns.md` for the catalog and
+`docs/agents/issue-tracker.md` (or `issues/bug-template.md`
+in the framework) for the bug protocol.
+
+## Features
+
+See `docs/agents/feature-protocol.md` for the slice
+discipline and `docs/agents/issue-tracker.md` (or
+`issues/feature-template.md` in the framework) for the
+feature protocol.
+
+## Domain vocabulary
+
+See [CONTEXT.md](CONTEXT.md) for the project's glossary. Read
+it end-to-end before writing any user-facing copy or
+schema-touching code.
+
+## CHANGELOG
+
+Every user-visible change gets a bullet in [CHANGELOG.md](CHANGELOG.md)
+`[Unreleased]` under the right heading in the same commit
+that lands the change.
