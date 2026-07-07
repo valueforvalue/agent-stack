@@ -25,6 +25,9 @@ These cross-cut every task. Load them once.
 | [`feature-protocol.md`](feature-protocol.md) | Adding a feature |
 | [`code-changes.md`](code-changes.md) | Cross-layer change (view + framework attrs + JS + backend or analogous) |
 | [`bug-patterns.md`](bug-patterns.md) | Hunting a bug or reviewing a fix |
+| [`subagent-pattern.md`](subagent-pattern.md) | Work that may benefit from delegated context (noisy research, parallel reads, restricted tool surface) |
+| [`adr-discipline.md`](adr-discipline.md) | Recording a durable decision the next session needs |
+| [`agent-memory.md`](agent-memory.md) | Working memory across sessions (compaction, checkpoint/rehydrate pattern) |
 
 ## Tier-2 — on demand
 
