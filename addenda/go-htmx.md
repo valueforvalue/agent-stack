@@ -821,3 +821,128 @@ Quick reference table for Go + HTMX apps:
 - HTMX: <https://htmx.org/>
 - templ: <https://templ.guide/>
 - chi router: <https://github.com/go-chi/chi>
+
+## HTMX-specific guard tests
+
+The patterns below are guard tests you write *before* the
+slice lands, not after. Each one fails the moment the
+listed shape of drift appears. Borrowed from
+[Innei's LobeHub Next.js → Hono migration field report](https://innei.in/en/posts/tech/nextjs-shell-hono-backend-migration)
+(the *route-shell guard test* is the reference architecture)
+and [HTMX issue #3300](https://github.com/bigskysoftware/htmx/issues/3300)
+(the after-swap re-binding gotcha).
+
+### 1. Route-table integrity (chi ↔ templates, both directions)
+
+**The bug.** Two halves of the system drifted: a handler
+was added (or removed, or refactored) and the corresponding
+template attribute was not updated. Or vice versa. The Innei
+pattern iterates every route file and asserts each contains
+only imports + handler-forward exports — any logic that
+creeps back fails CI.
+
+For Go + HTMX, the analogous test runs both directions:
+
+**Forward (handlers → templates).** Build a set of
+`chi.RoutePattern`s from the router. For every handler,
+assert at least one template references one of its URLs
+through the typed URL builder. Handlers with no caller are
+orphaned.
+
+**Reverse (templates → handlers).** Walk every rendered
+HTML for `hx-get="..."` / `hx-post="..."` / `hx-put="..."`
+attributes. Assert each target path is registered in the chi
+router. Templates referencing unregistered routes are the
+"click does nothing" bug class.
+
+Both tests use the typed URL builder as the shared
+vocabulary — a raw `hx-get="/soldiers/search"` string
+bypasses the builder and breaks the test. That's the
+point: raw strings force maintainers to update the
+guard.
+
+### 2. Response-shape contract (handler struct ↔ HTML)
+
+**The bug.** Handler returns the right status code with the
+wrong fields, or the template renders a data attribute the
+handler doesn't emit. Tests that assert response status +
+content-type alone don't catch this.
+
+The fix is a struct-to-template assertion: for each
+handler+template pair, assert that every `{{ .Field }}` in
+the template's typed render corresponds to a field on the
+handler's returned DTO. Mismatches are the
+*response-shape mismatch* pattern in the meta-catalog.
+
+### 3. Swap-scope re-binding test (HTMX #3300)
+
+**The bug.** A click handler works on first page load,
+breaks after the first swap. The cause is that the
+listener was attached during boot to elements that htmx
+later replaced via `hx-swap="outerHTML"`. The
+[canonical HTMX issue #3300](https://github.com/bigskysoftware/htmx/issues/3300)
+documents that `afterswap` fires only on the swap *target*,
+not on the swapped-out region's former listeners.
+
+The test:
+
+- For each template region that uses `hx-swap="outerHTML"`,
+  assert that any `addEventListener` call inside the
+  region is either:
+  - Rewritten as `hx-on::after-swap="..."`, OR
+  - Delegated to a stable ancestor (`document`,
+    `<body>`, or a region that is never swapped), OR
+  - Bound to an element explicitly marked
+    `hx-on::load="install()"` + `hx-on::after-swap="install()"`
+    symmetrically.
+
+This is the additive form of the §3.3 / §3.7 entries
+above: the *catalogue* says "use `hx-on::after-swap`"; the
+*guard test* enforces it.
+
+### 4. OOB target integrity
+
+**The bug.** A handler returns an OOB (out-of-band) swap
+that names a target by id, but no element with that id is
+in the current DOM. The swap silently does nothing.
+
+The test asserts: for every `hx-swap-oob="id:X"` (or the
+templ equivalent), the id is registered in
+`internal/uiids.Registry`. Bare string IDs in OOB swaps are
+a code smell; the test catches them.
+
+### 5. Route-order wildcard ordering (chi-specific)
+
+**The bug.** `chi` walks the route table in registration
+order; wildcards swallow too eagerly. A common symptom is
+a wildcard handler `/{prefix}/*` registered *before* the
+specific path `/{prefix}/{id}/edit`. The specific path
+becomes dead code.
+
+The test asserts: for any wildcard pattern
+`/.../*` registered at depth N, no more specific pattern
+sharing the same prefix exists at depth > N. That is,
+specifics must come first. This generalises the §1 in
+the meta-catalog and the "Redirect loop" §1.7 entry.
+
+## Adopting these tests
+
+A minimal starter set for a Go + HTMX + templ + chi repo:
+
+1. `internal/router/route_table_test.go` — forward + reverse
+   route integrity (guard test #1).
+2. `internal/templates/response_shape_test.go` — handler
+   struct ↔ template field contract (guard test #2).
+3. `internal/templates/swap_scope_test.go` — outerHTML
+   regions have correct re-binding discipline (guard test
+   #3).
+4. `internal/templates/oob_integrity_test.go` — OOB targets
+   are in `uiids.Registry` (guard test #4).
+5. `internal/router/route_order_test.go` — specifics before
+   wildcards (guard test #5).
+
+The starter set reads as a deployment contract: when a
+slice lands a new route, a new template, or a new OOB
+target, exactly one of these tests changes. If you change
+code without changing a test, you've shipped uncovered
+behaviour.
