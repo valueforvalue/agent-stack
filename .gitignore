@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Consensus-hunter calibration artifacts (reproducible per session)
+.consensus-hunter/
+skills/consensus-hunter/.consensus-hunter/
+
+# Calibration target repos (cloned for replay; never committed)
+cal-targets/
