@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentDiagnosticOutput (example)",
+  "agent_id": "static_security",
+  "evidence_slice": "static:fn+callers",
+  "findings": [
+    {
+      "coord": "django/db/models/query.py:_filter_or_exclude",
+      "score": 0.82,
+      "rank_band": "HIGH",
+      "evidence_quote": "if not q.connector or q.connector == AND:\n    return self._filter_or_exclude_no_neg(q)",
+      "reasoning": "The connector-or-AND short-circuit returns without honoring a negated Q; downstream query cloning may attach a negated sub-clause that this path silently skips. Two of the three public callers in the slice rely on negation being preserved."
+    },
+    {
+      "coord": "django/db/models/sql/compiler.py:get_select",
+      "score": 0.41,
+      "rank_band": "MED",
+      "evidence_quote": "select = []\nfor c in self.query.select:\n    select.append((col, alias))",
+      "reasoning": "Tuple ordering on select relies on dict iteration order from the upstream query; co-change history shows four regression fixes tied to this region in 18 months."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CoordRiskScore (example)",
+  "coord": "django/db/models/query.py:_filter_or_exclude",
+  "consensus_score": 0.812,
+  "agreement_band": "majority",
+  "n_agents_reported": 4,
+  "logit_variance": 0.34,
+  "history_prior_p": 0.78,
+  "contributing_agents": [
+    {
+      "agent_id": "static_security",
+      "score": 0.82,
+      "rank_band": "HIGH",
+      "reasoning": "The connector-or-AND short-circuit returns without honoring a negated Q..."
+    },
+    {
+      "agent_id": "history_churn",
+      "score": 0.71,
+      "rank_band": "HIGH",
+      "reasoning": "Six regression fixes in the file in 24 months; this function is in the top quartile of churn-co-changed neighbours."
+    },
+    {
+      "agent_id": "test_coverage",
+      "score": 0.55,
+      "rank_band": "MED",
+      "reasoning": "Three uncovered branches in the negated-Q path; hypothesis: a 3-way join through this path triggers the bug."
+    },
+    {
+      "agent_id": "spec_compliance",
+      "score": 0.20,
+      "rank_band": "LOW",
+      "reasoning": "docstring states the function 'filters or excludes given an iterable of Qs' — could be read either way; not a clear divergence."
+    }
+  ]
+}

@@ -51,6 +51,7 @@ user's installed skill catalog (`~/.pi/agent/skills/`,
 | `isolate-test-scope` | `framework-bundled` | `0.1.0` | `upstream:isolate-test-scope` | Test runtimes are high |
 | `verify-generation-state` | `framework-bundled` | `0.1.0` | `upstream:verify-generation-state` | Editing generated assets |
 | `write-a-skill` | `framework-bundled` | `0.1.0` | `upstream:write-a-skill` | User wants to author a skill |
+| `consensus-hunter` | `framework-bundled` | `0.1.0` | (none yet) | Pre-commit / pre-merge structured risk scan; complements `bug-hunter` with a faster read-only phase producing persisted per-function risk scores |
 
 ## Dedupe contract
 
