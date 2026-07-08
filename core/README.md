@@ -21,6 +21,7 @@ These cross-cut every task. Load them once.
 | Doc | Load when |
 |---|---|
 | [`rpci.md`](rpci.md) | Non-trivial work (3+ files or design questions) |
+| [`complexity.md`](complexity.md) | Designing a new module, debating YAGNI vs broad interface, reviewing for strategic-programming correctness |
 | [`tdd.md`](tdd.md) | Any feature or bug fix |
 | [`feature-protocol.md`](feature-protocol.md) | Adding a feature |
 | [`code-changes.md`](code-changes.md) | Cross-layer change (view + framework attrs + JS + backend or analogous) |
