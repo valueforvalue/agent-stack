@@ -85,7 +85,11 @@ def main() -> int:
                 asc.append(f_by_c[c])
         per_agent_pairs.append((o["agent_id"], al, asc))
 
-    calib = per_agent_calibration(per_agent_pairs)
+    calib = per_agent_calibration(
+        per_agent_pairs,
+        global_labels=labels,
+        coords_evaluated=coords_evaluated,
+    )
 
     # Naive-mean comparator (no logit space): arithmetic mean over agents
     naive_pred = []

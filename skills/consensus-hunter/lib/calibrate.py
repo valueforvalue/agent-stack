@@ -139,27 +139,66 @@ def derive_weights(
 
 def per_agent_calibration(
     runs: list[tuple[str, list[tuple[str, int]], list[float]]],
+    global_labels: list[int] | None = None,
+    coords_evaluated: list[str] | None = None,
+    default_score: float = 0.5,
 ) -> dict:
     """Score per-agent on a labeled held-out set.
 
     Args:
         runs: list of (agent_id, [(coord, known_label)], [agent_score]) triples.
               The lists for coord and score must align.
+        global_labels: optional list of labels for the FULL eval universe,
+              in the order matched to `coords_evaluated`. When supplied
+              with `coords_evaluated`, each agent's Skill Score is computed
+              against the *global* base rate, with missing coords default-
+              filled to `default_score`. This avoids the subset base-rate
+              artifact where an agent that only reports on suspected-buggy
+              coords gets credit for "predicting the base rate" it
+              constructed for itself.
+              If None, falls back to per-agent-subset evaluation (legacy).
+        coords_evaluated: required if global_labels is set; the exact coord
+              order the global labels are indexed by.
+        default_score: score to assign coords the agent did not report on.
 
     Returns:
         dict with per-agent brier, skill score, platt (a, b), and overall
         derived weight.
     """
-    per_agent: dict[str, list[tuple[int, float]]] = defaultdict(list)
-    for agent_id, labeled, scores in runs:
-        if len(labeled) != len(scores):
-            raise ValueError(f"{agent_id}: labeled/score length mismatch")
-        for (coord, y), s in zip(labeled, scores):
-            per_agent[agent_id].append((y, s))
+    if global_labels is None:
+        # legacy: per-subset evaluation
+        per_agent_pairs: dict[str, list[tuple[int, float]]] = defaultdict(list)
+        for agent_id, labeled, scores in runs:
+            if len(labeled) != len(scores):
+                raise ValueError(f"{agent_id}: labeled/score length mismatch")
+            for (coord, y), s in zip(labeled, scores):
+                per_agent_pairs[agent_id].append((y, s))
+        agent_pairs_for_iter = per_agent_pairs
+    elif coords_evaluated is None:
+        raise ValueError("coords_evaluated is required when global_labels is set")
+    else:
+        if len(coords_evaluated) != len(global_labels):
+            raise ValueError(
+                f"coords_evaluated ({len(coords_evaluated)}) and global_labels "
+                f"({len(global_labels)}) must have the same length"
+            )
+        # Label vector indexed by coord order.
+        global_label_lookup = dict(zip(coords_evaluated, global_labels))
+
+        agent_pairs_for_iter = {}
+        for agent_id, labeled, scores in runs:
+            if len(labeled) != len(scores):
+                raise ValueError(f"{agent_id}: labeled/score length mismatch")
+            score_by_coord = {coord: s for (coord, _), s in zip(labeled, scores)}
+            pairs = []
+            for coord, y in zip(coords_evaluated, global_labels):
+                s = score_by_coord.get(coord, default_score)
+                pairs.append((y, s))
+            agent_pairs_for_iter[agent_id] = pairs
 
     out: dict = {"agents": {}, "global": {}}
     all_labels: list[int] = []
-    for agent_id, pairs in per_agent.items():
+    for agent_id, pairs in agent_pairs_for_iter.items():
         labels = [y for y, _ in pairs]
         preds = [s for _, s in pairs]
         bs = brier_score(preds, labels)
