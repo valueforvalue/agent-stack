@@ -10,10 +10,26 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
 ## [Unreleased]
 
 ### Added
-- `core/` — stack-agnostic rules (session protocol, commit &
-  branch policy, RPCI flow, TDD discipline, feature protocol,
-  cross-layer contract, laws, docs-index scheme, glossary
-  discipline, bug-pattern catalog with per-layer stubs).
+- `core/complexity.md` — principles doc pairing with `feature-protocol.md`
+  §Module discipline and `session-protocol.md` Rule 3 (YAGNI). Reconciles
+  the YAGNI ↔ Ousterhout tension with the net-complexity-gain test; covers
+  tactical-vs-strategic programming, Hickey's decomplecting, the rule of
+  three, mechanical-boundary enforcement, theory-as-deliverable (Naur),
+  boring technology (McKinley), entropy budgeting (Lehman).
+- `skills/consensus-hunter/` — multi-agent LLM bug-hunting skill, modelled
+  on Craven's Bayesian submarine-search idea. Five evidence slices per run
+  (static, history, tests, contract, spec) aggregated in logit space with
+  per-agent weighting from held-out calibration. Ships with calibration
+  harness (`lib/calibrate.py`), three-prior history fusion
+  (`lib/prior.py`), schema (`lib/schema.py`), aggregator (`lib/aggregate.py`),
+  presets, fixture examples, 33 invariant tests, and a calibration runner
+  script. Validated against django @ 2020-06-01 with held-out labels from
+  post-cutoff git history: Skill Score +0.24, precision@K +0.22 above
+  base rate. See `skills/consensus-hunter/SKILL.md` for the design writeup.
+- `.gitignore` — excludes `cal-targets/` (cloned calibration repos) and
+  `.consensus-hunter/` (per-session calibration artifacts) so reproducible
+  scratch state never lands in version control.
+
 - `addenda/go-htmx.md` — Go + HTMX + templ + chi + Wails
   patterns, dialog-guard helper templates, routebuilder /
   htmxattr / uiids patterns, bug catalog §1–§6.
@@ -33,6 +49,19 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
   CHANGELOG.md, CONTRIBUTING.md, GitHub issue + PR templates).
 - `skills/SKILLS.md` — manifest with provenance + version +
   checksum contract. Skill bodies ship in Slice 2.
+
+### Changed
+- `core/session-protocol.md` Rule 3 — refined from a one-line YAGNI to
+  "YAGNI for *features*, not for interfaces," with explicit pointer to
+  `complexity.md` §1 (net-complexity-gain test) and to the
+  `feature-protocol.md` two-adapter rule. Preserves grep-friendliness
+  while making the YAGNI ↔ deep-modules distinction legible to agents.
+- `core/README.md` — added `complexity.md` to the tier-1 "load by task"
+  table; updated tier-0/1 hierarchy reference.
+- `skills/SKILLS.md` — added `consensus-hunter` to v0.1.0 manifest with
+  `framework-bundled` source and a load-when that distinguishes it from
+  `bug-hunter` (parallel + numeric + persistent vs sequential + narrative
+  + ephemeral).
 
 ### Fixed
 - `templates/AGENTS.md.tmpl` and `templates/CONTRIBUTING.md.tmpl`
