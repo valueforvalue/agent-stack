@@ -302,9 +302,11 @@ python -m unittest discover -t skills/consensus-hunter skills/consensus-hunter/t
 - [`code-review`](../code-review/SKILL.md) — parallel narrative review (different shape).
 - [`pr-triage`](../pr-triage/SKILL.md) — single-PR disposition (different purpose).
 - [`complexity.md`](../../core/complexity.md) §10 — entropy-as-default rationale for the historical risk ledger this skill builds.
+- [`OPERATIONS.md`](OPERATIONS.md) — calibration methodology, the per-agent base-rate artifact, single-model convergence, the time-aware replay protocol. **Read this before running a calibration.**
+- [`../../docs/run-on-your-codebase.md`](../../docs/run-on-your-codebase.md) — top-level adoption guide; how to use this skill from the framework repo on a target codebase.
 - `presets/5-agent-preset.md`, `presets/3-agent-min.md` — agent definitions.
 - `lib/aggregate.py`, `lib/prior.py`, `lib/calibrate.py`, `lib/schema.py` — deterministic core.
-- `tests/test_aggregate.py`, `tests/test_calibrate.py`, `tests/test_schema.py` — invariant tests.
+- `tests/test_aggregate.py`, `tests/test_calibrate.py`, `tests/test_schema.py`, `tests/test_calibrate_subset_artifact.py` — invariant tests.
 
 External sources cited inline in `lib/`:
 - Spiess et al., *Calibration and Correctness of LMs for Code*, ICSE 2025.

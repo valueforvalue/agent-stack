@@ -88,6 +88,13 @@ they fit together. None of this requires `init.sh`; you
 can copy `core/` into an existing repo without touching the
 bootstrap scripts.
 
+For the **operational runbook** (how to actually run the
+calibration skill on your codebase, with the time-aware
+replay protocol, with the gotchas learned in the real
+django and dixiedata calibration runs), see
+[`docs/run-on-your-codebase.md`](docs/run-on-your-codebase.md)
+and [`skills/consensus-hunter/OPERATIONS.md`](skills/consensus-hunter/OPERATIONS.md).
+
 ### `core/complexity.md` — read first
 
 The YAGNI-vs-Ousterhout reconciliation that the framework

@@ -29,6 +29,15 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
 - `.gitignore` — excludes `cal-targets/` (cloned calibration repos) and
   `.consensus-hunter/` (per-session calibration artifacts) so reproducible
   scratch state never lands in version control.
+- `docs/run-on-your-codebase.md` — top-level adoption guide covering Tier 0
+  (one-time scaffolding), Tier 1 (operational primitives pilot — including
+  the LLM-driven calibration loop), and Tier 2 (per-PR scans + historical
+  risk ledger). Operational, not design-rationale.
+- `skills/consensus-hunter/OPERATIONS.md` — calibration methodology doc:
+  time-aware replay protocol, the per-agent base-rate artifact (lesson
+  learned from the dixiedata run), single-model 5-agent convergence,
+  per-agent weight trust rules, walk-through for reproducing the
+  dixiedata result. Required reading before running a calibration.
 
 - `addenda/go-htmx.md` — Go + HTMX + templ + chi + Wails
   patterns, dialog-guard helper templates, routebuilder /

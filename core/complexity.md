@@ -313,3 +313,23 @@ decompose before shipping — the slice is bigger than
   boring infra.
 - jmoiron, [Notes on A Philosophy of Software Design](https://jmoiron.net/blog/notes-on-philosophy-of-software-design)
   — practitioner critique.
+
+## Operationalising §1, §5, §10
+
+The principles in this doc are abstract; their operational form
+lives elsewhere in the framework:
+
+- §1 (net-complexity-gain test) — operationalised in the two-adapter
+  rule in [`feature-protocol.md`](feature-protocol.md) §Module discipline.
+- §5 (rule of three) — operationalised in the two-adapter rule; same
+  file.
+- §7 (theory as deliverable) — operationalised in
+  [`adr-discipline.md`](adr-discipline.md).
+- §10 (entropy as default) — operationalised in the historical risk
+  ledger built by [`../skills/consensus-hunter/`](../skills/consensus-hunter/).
+  See [`../skills/consensus-hunter/OPERATIONS.md`](../skills/consensus-hunter/OPERATIONS.md)
+  for the calibration methodology and the per-coord drift pattern
+  that gives the lead indicator this principle references.
+
+For the runbook that maps each § to day-to-day work on a target
+repo, see [`../docs/run-on-your-codebase.md`](../docs/run-on-your-codebase.md).
