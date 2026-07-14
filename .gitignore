@@ -18,6 +18,11 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Per-adopter scratch (Python REPL probes, audit notes in-flight,
+# build-tmp files). Each .scratch/* file is disposable; reproduce
+# by re-running the script that generated it.
+.scratch/
 *.swo
 
 # Consensus-hunter calibration artifacts (reproducible per session)
