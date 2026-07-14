@@ -214,6 +214,49 @@ human with the build.
 names its tier in the subject and ships the whole tier in
 one commit.
 
+**Principle warnings** are required when a slice is about to
+violate a principle documented in
+[`pragmatic-principles.md`](pragmatic-principles.md). The
+block carries four pieces of information — see
+[§"Principle warnings block" below](#principle-warnings-block).
+The user signs off on the warning as part of the Plan approval
+gate ([`rpci.md`](rpci.md) §C — Critique). Undocumented
+violations are bugs.
+
+### Principle warnings block
+
+When a slice is about to **violate a principle** documented in
+[`pragmatic-principles.md`](pragmatic-principles.md), the slice
+plan carries a `## Principle warnings` block with four pieces
+of information. The block makes the violation reviewable;
+undocumented violations are bugs.
+
+```markdown
+## Principle warnings
+
+- **Principle**: §1.X — <name> (e.g. §1.1 DRY, §1.2
+  Orthogonality, §1.13 Refactoring). If no §-number applies,
+  name the principle verbatim.
+- **Operational form**: which doc / guard test / rule is being
+  violated (e.g. "the deep-module rule in `complexity.md`",
+  "the forbidden-import test").
+- **Rationale**: why this case is a known-and-intentional
+  exception. What forces the violation here?
+- **Cleanup plan**: when + how the violation gets resolved.
+  Usually a follow-up issue filed in the same slice commit,
+  with the issue number. If the violation is permanent, say
+  so explicitly and cite the principle's "when you might
+  violate" entry that covers the case.
+```
+
+The rationale + cleanup plan land **verbatim** in the commit
+message and the CHANGELOG bullet so the next agent sees the
+documented violation when reading the work. When a violation
+is the kind that *will recur*, the slice's follow-up commit
+extends [`pragmatic-principles.md`](pragmatic-principles.md)
+with a "when you might violate" bullet. The doc grows with the
+codebase.
+
 ## When to load what
 
 | If you're working on... | Read these (in order) |
@@ -247,6 +290,9 @@ one commit.
 
 - The repo's glossary — read first
 - [`rpci.md`](rpci.md) — Research → Plan → Critique → Implement
+- [`pragmatic-principles.md`](pragmatic-principles.md) — the
+  principle spine; loaded when designing, refactoring, or
+  auditing a violation
 - `../issues/feature-template.md` — full issue body template
 - [`bug-patterns.md`](bug-patterns.md) — per-layer bug patterns
 - [`code-changes.md`](code-changes.md) — cross-layer contract

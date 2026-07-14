@@ -147,3 +147,22 @@ A rule becomes a law when:
 
 If a rule fails any of those, it's still a guideline — keep
 it in the per-feature doc, not in this file.
+
+## Laws vs principles
+
+Laws are not the only agent-facing rule type. Laws are
+**earned-by-real-bug, CI-enforceable**; principles are
+**guides with a documented warn+cite protocol**. When a slice
+is about to violate a *principle* (not a law), the agent
+follows the [pragmatic-principles.md §"warn + cite
+protocol"](pragmatic-principles.md) — names the principle,
+cites the operational form, states the rationale, states the
+cleanup plan, and lands both in the commit message + CHANGELOG.
+The user signs off as part of Plan approval.
+
+Principles are documented in
+[`pragmatic-principles.md`](pragmatic-principles.md). The
+cross-reference table in §3 of that doc names which Law (or
+which per-feature doc) is the operational form of each
+principle. New contributors read the principles for the *why*;
+reviewers read the Laws for the *what*.

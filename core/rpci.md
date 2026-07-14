@@ -83,6 +83,10 @@ testable slices that map to commits.
 ## Decisions to confirm
 - Q1: ...
 
+## Principle warnings
+- (per [`pragmatic-principles.md`](../pragmatic-principles.md)
+  §"warn + cite protocol" — name, cite, rationale, cleanup)
+
 ## Slice 1 (tracer bullet — fully detailed)
 - Files: <paths>
 - Success criteria: <observable>
@@ -92,6 +96,17 @@ testable slices that map to commits.
 - Slice 2: <one-line shape>
 - Slice 3: <one-line shape>
 ```
+
+The `## Principle warnings` block is **required** when a slice
+violates a principle documented in
+[`pragmatic-principles.md`](../pragmatic-principles.md)
+(DRY, orthogonality, Law of Demeter, MVC, metaprogramming,
+temporal coupling, refactoring, etc.). See that doc's §"warn
++ cite protocol" for the four-part shape. The user signs off
+on the violation as part of the Critique gate, and the
+rationale + cleanup plan land verbatim in the commit message
++ CHANGELOG bullet. **Undocumented principle violations are
+bugs**, same as undocumented legal violations.
 
 **Stub-vs-detailed rule:** Slice 1 is the only slice that
 ships in this session. Slice 2+ get one-line stubs because the
