@@ -919,6 +919,154 @@ upgrade or replacement.
 - Tip #71 in `../docs/audit/pragmatic-programmer-audit-2026-07.md`
   — the audit row this section closes
 
+## Mutation testing
+
+### Scanner: `go-mutesting`
+
+The framework-level `scripts/check-mutations.sh` template
+dispatches to `go-mutesting` for Go repos. One-time dev-box
+install:
+
+```bash
+go install github.com/avito-tech/go-mutesting/cmd/go-mutesting@latest
+```
+
+The script's `go` case invokes:
+
+```bash
+go-mutesting ./... --config .mutesting.yaml
+```
+
+### Mutator config (`.mutesting.yaml`)
+
+`go-mutesting` reads a project-level config at the repo
+root. The starter set for a Go + HTMX repo:
+
+```yaml
+# .mutesting.yaml
+# Per-package thresholds: a package below this score is a
+# candidate for more tests. 80% is the working target; below
+# 60% indicates a real coverage gap.
+mutation-score-threshold:
+  default: 0.80
+
+# Skip generated + test files; their mutations are noise.
+exclude:
+  - '.*_test\.go'
+  - '.*_templ\.go'   # templ-generated
+  - 'internal/generated/.*'
+
+# Add a domain-specific mutator if one lands. The default
+# mutator set covers the bulk.
+custom-mutators:
+  # - MyCustomMutator  # example
+```
+
+The framework rule: 80% mutation score is the
+*working target*, not the gate. A package below 60% is a
+flag in the weekly run; the PR gate is per-package with
+**score must not regress** semantics (new mutations in
+touched code must kill all existing mutants + any new
+mutants).
+
+### CI wiring
+
+```yaml
+name: mutations
+on:
+  pull_request:
+    paths:
+      - '**.go'
+      - '.mutesting.yaml'
+  schedule:
+    - cron: '0 7 * * 1'   # weekly Monday 07:00 UTC
+jobs:
+  go-mutesting:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30   # mutation testing is slow
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+      - run: go install github.com/avito-tech/go-mutesting/cmd/go-mutesting@latest
+      - name: mutate PR scope
+        if: github.event_name == 'pull_request'
+        # mutate only the touched packages; see the
+        # `paths:` filter above
+        run: bash scripts/check-mutations.sh go ./internal/<touched-pkg> 2>&1 | tee mutations.txt
+      - name: mutate full repo
+        if: github.event_name == 'schedule'
+        run: bash scripts/check-mutations.sh go ./... 2>&1 | tee mutations.txt
+      - name: upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-mutesting
+          path: mutations.txt
+```
+
+PR gate: per-package, score-must-not-regress. Weekly:
+full-repo, capture trend over time.
+
+### What mutation testing catches vs misses
+
+Catches:
+- **Test-only-checks-existence** — a test that constructs
+  a value but never asserts on it. The mutation
+  (`if x > 0` → `if x >= 0`) passes because the test
+  never varies the input.
+- **Impossibly-broad assertions** — `assert.NoError(t, err)`
+  on a code path that can never error. The mutation flips a
+  conditional; the test still passes because the assertion
+  is too loose.
+- **Brittle / snapshot-only tests** — a test that pins the
+  rendered output byte-for-byte catches regressions but
+  *cannot* catch logical errors. Mutation testing forces
+  the test to exercise *behavior*, not shape.
+
+Misses:
+- **Requirements gaps.** A test that asserts the wrong
+  thing passes both with and without the mutation; mutation
+  testing can't fix a test that asserts the wrong
+  invariant.
+- **Missing tests entirely.** No test = no signal. Mutation
+  testing improves the *quality* of existing tests; it
+  doesn't create new ones.
+
+### Go-mutation-specific failure modes
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `go-mutesting` times out (>30min) | Unbounded `./...` on a large repo | Scope to the touched package in the PR gate |
+| `go-mutesting: no Go files matched` | Default scope `./...` from a subdirectory | Pass the package path explicitly |
+| Mutation score drops from 85% → 60% on a refactor | Many new code paths without new tests | The drop is the *signal* — add tests in the refactor's follow-up PR (per `core/feature-protocol.md` §'The 3-tier commit rule', refactor + tests is two commits) |
+| Custom mutator won't compile | Go version drift | Pin go-mutesting version in `go.mod` `toolchain` directive |
+
+### When mutation testing is too slow
+
+Don't try to mutate the entire `./...` in CI. The pattern:
+1. PR gate: mutate only the package(s) the PR touched
+   (use `paths:` filter + a script that maps touched files
+   to package paths).
+2. Weekly cron: full-repo. The weekly score is the trend
+   line; the PR score is the *floor*.
+3. Local: developers run `bash scripts/check-mutations.sh
+   go ./internal/<their-package>` before pushing. The
+   dev-box loop is fast; CI is for the floor + the audit.
+
+### References
+
+- [go-mutesting upstream](https://github.com/avito-tech/go-mutesting)
+  — the Go-aware mutation tester
+- [cargo-mutants](https://github.com/sourcefrog/cargo-mutants) for
+  the Rust pattern (cleanest tooling shape)
+- `../scripts/check-mutations.sh` — the framework-level
+  template this section specializes
+- Tip #92 in `../docs/audit/pragmatic-programmer-audit-2026-07.md`
+  — the audit row this section closes
+
 ## References
 
 - `../core/laws.md` — universal laws
