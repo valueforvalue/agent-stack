@@ -61,24 +61,21 @@ audit; the audit is a check, not a refactor.
   action" + the prose style of every doc — is itself the
   operational form.
 
-- **Two clear gaps worth following up:**
-  - **Tip #9** *Invest Regularly in Your Knowledge Portfolio*
-    — No `docs/learning/` or per-agent reading list. The
-    audit *is* a knowledge-portfolio act, but it's a one-shot,
-    not a habit. **Candidate follow-up**: a "reading list"
-    lane in the adopt flow (per-stack prereqs + bookend
-    reading).
-  - **Tip #71** *Apply Security Patches Quickly* — No
-    `govulncheck` (Go) / `pip-audit` (Python) / `npm audit`
-    in `scripts/` or any per-adopter CI hint. Deps are
-    updated when forced, not on a schedule. **Candidate
-    follow-up**: per-stack addendum note + a starter
-    security-scan script in `scripts/`.
-  - **Tip #92** *Use Saboteurs to Test Your Testing* — No
-    mutation testing. The per-stack guard tests catch
-    regressions but not silent test-skipping. **Candidate
-    follow-up**: investigate Go `go-mutesting` or JS
-    `stryker` per-stack in the relevant addenda.
+- **Audit-1 candidate follow-ups (status as of 2026-07-14):**
+  - **Tip #9** *Invest Regularly in Your Knowledge Portfolio* —
+    **✅ closed.** `docs/learning/` + `docs/learning/addenda/go-htmx.md`
+    land as the per-stack reading-list convention. New addenda
+    ship with a paired learning entry per `addenda/README.md`.
+  - **Tip #71** *Apply Security Patches Quickly* —
+    **✅ closed.** `scripts/check-security.sh` template dispatches
+    one canonical scanner per stack (govulncheck / npm audit /
+    pip-audit / cargo audit / bundle-audit);
+    `addenda/go-htmx.md` §'Security' ships the worked CI recipe.
+  - **Tip #92** *Use Saboteurs to Test Your Testing* —
+    **✅ closed.** `scripts/check-mutations.sh` template +
+    `addenda/go-htmx.md` §'Mutation testing' ship the worked
+    Go recipe (.mutesting.yaml config + per-package PR gate +
+    weekly cron).
 
 - **Three ⚠️ partials worth knowing about:**
   - **Tip #6** *Be a Catalyst for Change* — The bootstrap
@@ -119,8 +116,8 @@ below).
 | 5 | Don't Live with Broken Windows | ✅ | `core/laws.md` — every Law was earned by a real bug. The universal-laws pattern (re-entry, doc-comment floor, context-file hand-curated, Tier-0 size ceiling) pins the tip. |
 | 6 | Be a Catalyst for Change | ⚠️ | agent-stack is *literally* a catalyst (bootstrap script + `scripts/init.sh` + `addenda/` invite contributions) but no doc claims that role. Implicit, not stated. |
 | 7 | Remember the Big Picture | ✅ | `docs/agents/INDEX.md` 3-tier progressive-disclosure table is the operational form. Agents know which doc to load per task-role. |
-| 8 | Make Quality a Requirements Issue | ⚠️ | `issues/feature-template.md` has "Acceptance criteria" but no "Quality bar" field. The test-floor + smoke-probe contract in `core/laws.md` carries quality implicitly. Open gap. |
-| 9 | Invest Regularly in Your Knowledge Portfolio | ❌ | No `docs/learning/` or per-stack reading list. This audit doc is a one-shot, not a habit. **Candidate follow-up**: a starter `docs/learning/` per adding a per-stack addendum. |
+| 8 | Make Quality a Requirements Issue | ✅ | `issues/feature-template.md` §'Quality bar' ships six default checkboxes (test floor, smoke probe, adjacent sweep, a11y baseline, perf budget, docs updated). `ready-for-agent` requires every applicable box ticked. |
+| 9 | Invest Regularly in Your Knowledge Portfolio | ✅ | `docs/learning/README.md` + `docs/learning/addenda/go-htmx.md` ship per the four-section pattern (mental model / top-3 readings / addendum-first reading order / failure-mode catalogue). `addenda/README.md` makes the paired-file landing a hard requirement for new addenda. |
 | 10 | Critically Analyze What You Read and Hear | ⚠️ | `core/pragmatic-principles.md` §"Yesterday's best practice" frames it, but the per-PR discipline (e.g. "challenge the upstream claim before adopting the dependency") is not enforced by a guard test. |
 | 11 | English is Just Another Programming Language | ✅ | `core/glossary-discipline.md` + the 3-tier docs taxonomy. Every doc is reviewed for terminology drift; `core/bug-patterns.md` cross-references CWE / OWASP / DAPLab (vocabulary DRY). |
 | 12 | It's Both What You Say and the Way You Say It | ✅ | `core/commit-and-branch.md` §"Commit message shape" mandates 1-3 bullets explaining the *why* + regression net. The CHANGELOG is exemplary. |
@@ -144,7 +141,7 @@ below).
 | 30 | Don't Panic | ➖ | N/A. No incident-response flow at framework level. |
 | 31 | Failing Test Before Fixing Code | ✅ | `core/tdd.md` red-green-refactor protocol is the operational form. Step 1 ("RED") explicitly: write the failing test first. |
 | 32 | Read the Damn Error Message | ✅ | `core/tdd.md` §"The failure modes TDD prevents" — failure class #1 (Invoker wiring) mandates asserting the response shape AND `page.url()` AND DOM state, not just "got error somewhere." |
-| 33 | "select" Isn't Broken | ⚠️ | Implicit (no recent commit blamed Wails / chi / templ without evidence) but no stated rule. |
+| 33 | "select" Isn't Broken | ✅ | `core/bug-patterns.md` §'Debugging workflow' step 5 pins a five-step 'don't blame the framework by default' rule (read error message, run documented reproducer, search upstream issues, strip to minimal repro, cite upstream doc in PR). |
 | 34 | Don't Assume It—Prove It | ✅ | `core/tdd.md` §"What's the seam?" + the per-layer recipes (handler test, smoke probe, migration test) mandate asserting on the seam, not on assumptions. |
 | 35 | Learn a Text Manipulation Language | ➖ | N/A at the framework level. Per-adopter concern. |
 | 36 | You Can't Write Perfect Software | ✅ | `core/laws.md` §"No unguarded re-entrant UI calls" + §"Tier-0 docs have a size ceiling" are earned-by-real-bug examples. |
@@ -182,7 +179,7 @@ below).
 | 68 | Test Your Software, or Your Users Will | ✅ | `core/tdd.md` §"Adjacent behavior sweep" mandates testing adjacent surfaces, not just the slice. The smoke-probe pattern (assert response shape + `page.url()`) is the live practice. |
 | 69 | Use Property-Based Tests to Validate Your Assumptions | ⚠️ | `core/bug-patterns.md` references property-based tests in the meta-pattern section, but no general pattern ships at the framework level. Per-adopter decision. |
 | 70 | Keep It Simple and Minimize Attack Surfaces | ✅ | `core/complexity.md` §"Strategic programming framework" + `core/session-protocol.md` §"YAGNI" are the operational form. `core/feature-protocol.md` §"Two-adapter rule" pins the rule. |
-| 71 | Apply Security Patches Quickly | ❌ | No framework-level security-scan automation. `scripts/check-core-stack-agnostic.sh` checks doc-level structure but not dependency CVE status. **Candidate follow-up**: per-stack addendum note + starter security-scan scripts. |
+| 71 | Apply Security Patches Quickly | ✅ | `scripts/check-security.sh` template dispatches to one canonical scanner per stack (go: govulncheck; node: npm audit; python: pip-audit; rust: cargo audit; ruby: bundle-audit). `addenda/go-htmx.md` §'Security' ships the worked CI wiring (PR gate + weekly cron, JSON ingest). |
 | 72 | Name Well; Rename When Needed | ⚠️ | `core/glossary-discipline.md` prescribes the rename process for vocabulary terms, but no general "name well" rule. Implicit via the doc-comment floor. |
 | 73 | Sign Your Work | ✅ | `core/commit-and-branch.md` §"Commit message shape" + §"Push verification" mandate the commit-attribution + verification pattern. |
 | 74 | No One Knows Exactly What They Want | ✅ | `core/rpci.md` §C — Critique + `core/session-protocol.md` §"Capturing decisions" + the "the user is the chat" rule pin the tip. |
@@ -203,7 +200,7 @@ below).
 | 89 | Use Version Control to Drive Builds, Tests, and Releases | ⚠️ | Per-adopter concern. Framework supports the pattern via `core/commit-and-branch.md` but no built-in CI workflow ships. |
 | 90 | Test Early, Test Often, Test Automatically | ✅ | `core/tdd.md` + `scripts/check-core-stack-agnostic.sh` + the per-addendum guard-test starter set pin the tip. |
 | 91 | Coding Ain't Done 'Til All the Tests Run | ✅ | `core/tdd.md` §"The loop" Steps 2-3 mandate RED → GREEN → adjacent-behavior sweep. Per-slice commits include the regression net. |
-| 92 | Use Saboteurs to Test Your Testing | ❌ | No mutation testing ships at the framework level. The per-stack guard tests catch regressions but not silent test-skipping. **Candidate follow-up**: investigate per-stack tooling (`go-mutesting`, `stryker`, `mutmut`). |
+| 92 | Use Saboteurs to Test Your Testing | ✅ | `scripts/check-mutations.sh` template dispatches to one canonical tool per stack (go: go-mutesting; node: stryker; python: mutmut; rust: cargo-mutants; ruby: mutant). `addenda/go-htmx.md` §'Mutation testing' ships the worked `.mutesting.yaml` config + CI recipe (per-package PR gate + weekly cron). |
 | 93 | Test State Coverage, Not Code Coverage | ⚠️ | `core/tdd.md` §"Per-layer recipes" prescribes smoke probes that assert state (response shape + URL + DOM), not just code-path coverage. The "state coverage" framing is implicit. |
 | 94 | Find Bugs Once | ✅ | `core/tdd.md` §"Per-layer recipes" + the per-bug regression-test pattern (per `core/bug-patterns.md` §"Debugging workflow") pin the tip. |
 | 95 | Don't Use Manual Procedures | ✅ | `scripts/init.sh` (375 lines) + `scripts/{backfill-labels,check-core-stack-agnostic,dedupe-skills,sync-labels}.sh` automate the framework-level workflow. |

@@ -694,8 +694,8 @@ evidence per tip lives in the source audit at
 | 5 | Don't Live with Broken Windows | ✅ | — (philosophy / technique, not a principle) | `core/laws.md` — every Law was earned by a real bug. The universal-laws pattern (re-entry, doc-comment floo... |
 | 6 | Be a Catalyst for Change | ⚠️ | — (philosophy / technique, not a principle) | agent-stack is *literally* a catalyst (bootstrap script + `scripts/init.sh` + `addenda/` invite contributio... |
 | 7 | Remember the Big Picture | ✅ | — (philosophy / technique, not a principle) | `docs/agents/INDEX.md` 3-tier progressive-disclosure table is the operational form. Agents know which doc t... |
-| 8 | Make Quality a Requirements Issue | ⚠️ | — (philosophy / technique, not a principle) | `issues/feature-template.md` has "Acceptance criteria" but no "Quality bar" field. The test-floor + smoke-p... |
-| 9 | Invest Regularly in Your Knowledge Portfolio | ❌ | — (philosophy / technique, not a principle) | No `docs/learning/` or per-stack reading list. This audit doc is a one-shot, not a habit. **Candidate follo... |
+| 8 | Make Quality a Requirements Issue | ✅ | — (philosophy / technique, not a principle) | `issues/feature-template.md` §'Quality bar' ships six default checkboxes (test floor, smoke probe, adjacent... |
+| 9 | Invest Regularly in Your Knowledge Portfolio | ✅ | — (philosophy / technique, not a principle) | `docs/learning/README.md` + `docs/learning/addenda/go-htmx.md` ship per the four-section pattern (mental mo... |
 | 10 | Critically Analyze What You Read and Hear | ⚠️ | §1.19 WISDOM | `core/pragmatic-principles.md` §"Yesterday's best practice" frames it, but the per-PR discipline (e.g. "cha... |
 | 11 | English is Just Another Programming Language | ✅ | §1.16 It's All Writing | `core/glossary-discipline.md` + the 3-tier docs taxonomy. Every doc is reviewed for terminology drift; `cor... |
 | 12 | It's Both What You Say and the Way You Say It | ✅ | §1.19 WISDOM | `core/commit-and-branch.md` §"Commit message shape" mandates 1-3 bullets explaining the *why* + regression ... |
@@ -719,7 +719,7 @@ evidence per tip lives in the source audit at
 | 30 | Don't Panic | ➖ | — (philosophy / technique, not a principle) | N/A. No incident-response flow at framework level. |
 | 31 | Failing Test Before Fixing Code | ✅ | — (philosophy / technique, not a principle) | `core/tdd.md` red-green-refactor protocol is the operational form. Step 1 ("RED") explicitly: write the fai... |
 | 32 | Read the Damn Error Message | ✅ | §1.6 Dead Programs | `core/tdd.md` §"The failure modes TDD prevents" — failure class #1 (Invoker wiring) mandates asserting the ... |
-| 33 | "select" Isn't Broken | ⚠️ | §1.6 Dead Programs | Implicit (no recent commit blamed Wails / chi / templ without evidence) but no stated rule. |
+| 33 | "select" Isn't Broken | ✅ | §1.6 Dead Programs | `core/bug-patterns.md` §'Debugging workflow' step 5 pins a five-step 'don't blame the framework by default'... |
 | 34 | Don't Assume It—Prove It | ✅ | §1.6 Dead Programs | `core/tdd.md` §"What's the seam?" + the per-layer recipes (handler test, smoke probe, migration test) manda... |
 | 35 | Learn a Text Manipulation Language | ➖ | — (philosophy / technique, not a principle) | N/A at the framework level. Per-adopter concern. |
 | 36 | You Can't Write Perfect Software | ✅ | §1.5 Design by Contract | `core/laws.md` §"No unguarded re-entrant UI calls" + §"Tier-0 docs have a size ceiling" are earned-by-real-... |
@@ -757,7 +757,7 @@ evidence per tip lives in the source audit at
 | 68 | Test Your Software, or Your Users Will | ✅ | §1.14 Code That's Easy to Test | `core/tdd.md` §"Adjacent behavior sweep" mandates testing adjacent surfaces, not just the slice. The smoke-... |
 | 69 | Use Property-Based Tests to Validate Your Assumptions | ⚠️ | §1.14 Code That's Easy to Test | `core/bug-patterns.md` references property-based tests in the meta-pattern section, but no general pattern ... |
 | 70 | Keep It Simple and Minimize Attack Surfaces | ✅ | §1.14 Code That's Easy to Test | `core/complexity.md` §"Strategic programming framework" + `core/session-protocol.md` §"YAGNI" are the opera... |
-| 71 | Apply Security Patches Quickly | ❌ | — (philosophy / technique, not a principle) | No framework-level security-scan automation. `scripts/check-core-stack-agnostic.sh` checks doc-level struct... |
+| 71 | Apply Security Patches Quickly | ✅ | — (philosophy / technique, not a principle) | `scripts/check-security.sh` template dispatches to one canonical scanner per stack (go: govulncheck; node: ... |
 | 72 | Name Well; Rename When Needed | ⚠️ | §1.14 Code That's Easy to Test | `core/glossary-discipline.md` prescribes the rename process for vocabulary terms, but no general "name well... |
 | 73 | Sign Your Work | ✅ | — (philosophy / technique, not a principle) | `core/commit-and-branch.md` §"Commit message shape" + §"Push verification" mandate the commit-attribution +... |
 | 74 | No One Knows Exactly What They Want | ✅ | — (philosophy / technique, not a principle) | `core/rpci.md` §C — Critique + `core/session-protocol.md` §"Capturing decisions" + the "the user is the cha... |
@@ -778,7 +778,7 @@ evidence per tip lives in the source audit at
 | 89 | Use Version Control to Drive Builds, Tests, and Releases | ⚠️ | §1.15 Ubiquitous Automation | Per-adopter concern. Framework supports the pattern via `core/commit-and-branch.md` but no built-in CI work... |
 | 90 | Test Early, Test Often, Test Automatically | ✅ | §1.15 Ubiquitous Automation | `core/tdd.md` + `scripts/check-core-stack-agnostic.sh` + the per-addendum guard-test starter set pin the tip. |
 | 91 | Coding Ain't Done 'Til All the Tests Run | ✅ | §1.15 Ubiquitous Automation | `core/tdd.md` §"The loop" Steps 2-3 mandate RED → GREEN → adjacent-behavior sweep. Per-slice commits includ... |
-| 92 | Use Saboteurs to Test Your Testing | ❌ | — (philosophy / technique, not a principle) | No mutation testing ships at the framework level. The per-stack guard tests catch regressions but not silen... |
+| 92 | Use Saboteurs to Test Your Testing | ✅ | — (philosophy / technique, not a principle) | `scripts/check-mutations.sh` template dispatches to one canonical tool per stack (go: go-mutesting; node: s... |
 | 93 | Test State Coverage, Not Code Coverage | ⚠️ | — (philosophy / technique, not a principle) | `core/tdd.md` §"Per-layer recipes" prescribes smoke probes that assert state (response shape + URL + DOM), ... |
 | 94 | Find Bugs Once | ✅ | §1.15 Ubiquitous Automation | `core/tdd.md` §"Per-layer recipes" + the per-bug regression-test pattern (per `core/bug-patterns.md` §"Debu... |
 | 95 | Don't Use Manual Procedures | ✅ | §1.15 Ubiquitous Automation | `scripts/init.sh` (375 lines) + `scripts/{backfill-labels,check-core-stack-agnostic,dedupe-skills,sync-labe... |
@@ -792,9 +792,9 @@ evidence per tip lives in the source audit at
 
 | State | Count | What it means |
 |---|---|---|
-| ✅ Enforced | 52 | The repo is in compliance. The principle spine in §1 names the operational form. |
-| ⚠️ Partial | 30 | The spirit is satisfied but no written rule, or no regression net. A future commit could regress without the agent noticing. |
-| ❌ Gap | 3 | Not addressed. Each gap is a candidate follow-up. |
+| ✅ Enforced | 57 | The repo is in compliance. The principle spine in §1 names the operational form. |
+| ⚠️ Partial | 28 | The spirit is satisfied but no written rule, or no regression net. A future commit could regress without the agent noticing. |
+| ❌ Gap | 0 | Not addressed. Each gap is a candidate follow-up. |
 | ➖ N/A | 15 | Doesn't apply (multi-team management, hiring, hosting incidents, scheduling iteration). |
 
 The 100-tip audit is a **check**, not a refactor. The
@@ -814,5 +814,5 @@ per-tip *evidence*.
 ## §8 — References (see also §5)
 
 - The companion audit doc: [`docs/audit/pragmatic-programmer-audit-2026-07.md`](../docs/audit/pragmatic-programmer-audit-2026-07.md) — the per-tip *evidence*.
-- The regenerator: [`scripts/build_tip_index.py`](../scripts/build_tip_index.py) — reads the audit doc, writes `.scratch/appendix-final.md`. Run after every state change.
+- The regenerator: [`scripts/build_tip_index.py`](../scripts/build_tip_index.py) — reads the audit doc, writes `.scratch/appendix-final.md`. Run after every state change; then run this script to splice.
 - DixieData's `docs/agents/pragmatic-principles.md` (commit `cca2183` for the original spine, commit `177c2dd` for the tip-index appendix) — the upstream this doc was ported from.
