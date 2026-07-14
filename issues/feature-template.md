@@ -47,6 +47,46 @@ CONTEXT.md. If the feature uses existing terms only, write
 ## Acceptance criteria
 - [ ] <Observable, testable in 5 min>
 
+## Quality bar
+
+The Acceptance criteria answer *does it work?* The Quality bar
+answers *is it good enough to ship?* The two are separate —
+a feature can pass acceptance and still fail quality.
+
+Tick every box below that applies. Add new boxes (don't
+remove the defaults) for anything this slice ships that
+should hold itself to a higher bar than the framework floor.
+
+- [ ] **Test floor met.** Every new exported identifier
+      carries a doc comment + at least one passing test (per
+      `../core/laws.md` §'Doc comments on exported
+      identifiers').
+- [ ] **Smoke probe per apply-site.** Every UI apply-site
+      has a Playwright (or analog) probe that drives the live
+      binary + asserts response shape + `page.url()` after
+      the click (per `../core/tdd.md` §'Per-layer recipes').
+- [ ] **Adjacent-behavior sweep green.** No regression in
+      the slice's screen-family or shared JS dispatcher (per
+      `../core/tdd.md` §'Adjacent behavior sweep').
+- [ ] **A11y baseline.** Tab order intact; icon-only
+      buttons have `aria-label`; form inputs have labels;
+      modal focus traps + Escape close (per
+      `../core/bug-patterns.md` §'Accessibility').
+- [ ] **Performance budget acknowledged.** If the slice
+      adds a query in a hot path, a per-iter footprint
+      doc-comment lives next to it (per `../core/tdd.md`
+      §'Algorithm speed').
+- [ ] **Docs updated.** Glossary entry added if a new term
+      ships; CHANGELOG `[Unreleased]` bullet lands in the
+      same commit; any new public surface ID is in the
+      per-stack registry (per `../core/glossary-discipline.md`
+      + `../core/commit-and-branch.md`).
+
+The `ready-for-agent` label applies only when **every
+applicable** Quality-bar box is ticked *and* the Acceptance
+criteria are testable. **Unchecked quality bars are an
+explicit pre-merge blocker**, not an optional follow-up.
+
 ## Slice plan
 ### Slice 1: <name>
 - Files: <paths>
@@ -79,6 +119,7 @@ CONTEXT.md. If the feature uses existing terms only, write
 | Proposed fix | Proposed UX | Bug fixes are scoped to code; features span code + UI |
 | Files | Apply sites + Files | Bug touches specific files; feature touches a surface area |
 | Regression net | Test plan | Bug needs one net; feature needs per-apply-site nets |
+| (none — bug passes acceptance once it stops being wrong) | Quality bar | Bug fixes don't have a quality bar (the bug is the bar); features have a level-above-acceptance checklist (test floor, smoke probes, a11y, perf, docs) |
 
 ## Labels
 
