@@ -30,6 +30,11 @@ PR it back.
   React effects, retry-with-backoff for SQLAlchemy, etc.).
 - Per-layer bug catalog with `Find it:` greps.
 - Worked examples from real shipped bugs in the stack.
+- **A paired `docs/learning/addenda/<stack>.md`** with the
+  5-minute mental model + top-3 readings + addendum-first
+  reading order + failure-mode catalogue. The two files
+  ship together (see `docs/learning/README.md` §'When to
+  extend this dir').
 
 ## What stays out of an addendum
 

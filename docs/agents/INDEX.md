@@ -72,6 +72,7 @@ descriptions = doc never loaded.
 | Doc | Load when | Token cost |
 |---|---|---|
 | [`../core/docs-index-scheme.md`](../core/docs-index-scheme.md) | Reviewing tier placement (quarterly); OR adding a new agent-facing doc and not sure which tier. | ~1K |
+| [`../learning/README.md`](../learning/README.md) + the relevant `../learning/addenda/<stack>.md` | Onboarding onto a stack for the first time, or the audit's per-tier tip rows surface a 'burned-fingers' bullet pointing at the stack. The 5-minute mental model + top-3 readings section gets an agent productive faster than reading the addendum cold. | ~1K per per-stack entry |
 
 ## Tier 2 — On-demand
 
