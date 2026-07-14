@@ -812,6 +812,113 @@ Quick reference table for Go + HTMX apps:
 | Works in dev, fails in release | §4.7 hardcoded paths |
 | Tests crash on missing frontend | §4.8 wails runtime nil |
 
+## Security
+
+### Scanner: `govulncheck`
+
+The framework-level `scripts/check-security.sh` template
+dispatches to `govulncheck` for Go repos (`go`
+auto-detection). One-time dev-box install:
+
+```bash
+go install golang.org/x/vuln/cmd/govulncheck@latest
+```
+
+The script is wired to invoke:
+
+```bash
+govulncheck -mode=json ./...
+```
+
+`-mode=json` is the CI-ingestible output; the JSON goes
+to the workflow's artifact store for triage.
+
+### CI wiring
+
+Add a job to `.github/workflows/security.yml` (or your CI
+equivalent):
+
+```yaml
+name: security
+on:
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'   # weekly Monday 06:00 UTC
+jobs:
+  govulncheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+      - run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: govulncheck
+        run: bash scripts/check-security.sh go ./... 2>&1 | tee govulncheck.txt
+      - name: upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: govulncheck
+          path: govulncheck.txt
+```
+
+The weekly cron catches vulnerabilities disclosed between
+PR cycles; the PR gate keeps new code from introducing
+known-bad deps.
+
+### What govulncheck catches vs misses
+
+`govulncheck` reports dependencies that **your code
+actually calls** into a vulnerable surface. It's not a
+general CVE scanner — a dep with a vuln that your code
+never reaches is `no symbol in call graph` and doesn't
+block the PR. That's the right trade-off for a PR gate
+(otherwise every green-field repo would fail on the first
+run because of inherited transitive vulns).
+
+For transitive-only vulns (you have the dep but don't call
+the vulnerable symbol), the weekly cron is the catch. The
+two together — PR gate for *reachable* + weekly cron for
+*all* — match Tip #71 (*Apply Security Patches Quickly*)
+without blocking PRs on noise.
+
+### Go-security-specific failure modes
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `govulncheck` returns no findings but `go.sum` has CVEs | `govulncheck` only reports *reachable* vulns. The weekly cron is the safety net. | Wait for the weekly run; or `govulncheck -show=verbose` to see call-graph skips |
+| False positive: govulncheck flags a dep your code does call, but you've verified it's a false alarm | Vendor forks that patched silently; community disagreement on the vuln | Document the false-positive in the PR; link the upstream issue; pin the dep version in the manifest with a `// CVE-XXXX: false positive per <link>` comment |
+| `govulncheck` install failed in CI | `go install` doesn't honor `GOPROXY` if a firewall blocks it | Use `actions/setup-go` cache + retry; document the env requirement in the workflow file |
+
+### When govulncheck is too noisy
+
+If `govulncheck` keeps flagging known-false positives (rare
+in healthy repos; common in vendored legacy), add a
+`vuln-allowlist.txt` file with one CVE ID per line, and
+extend the script to read it:
+
+```bash
+# After govulncheck runs:
+while read -r cve; do
+  grep -v "CVE-${cve}" govulncheck.txt > govulncheck.filtered.txt
+done < vuln-allowlist.txt
+```
+
+The allowlist is the *last* resort — try fixing deps first.
+A two-year-old allowlist is a signal the dep needs an
+upgrade or replacement.
+
+### References
+
+- [govulncheck upstream](https://github.com/golang/vuln)
+  — the Go security team's scanner
+- `../scripts/check-security.sh` — the framework-level
+  template this section specializes
+- Tip #71 in `../docs/audit/pragmatic-programmer-audit-2026-07.md`
+  — the audit row this section closes
+
 ## References
 
 - `../core/laws.md` — universal laws
