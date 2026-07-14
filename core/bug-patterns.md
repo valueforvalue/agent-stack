@@ -302,6 +302,46 @@ review, prod report) and the fix is non-obvious, **add a
 snapshot or behavioral test that would have caught it.**
 This is what codifies "we already burned fingers on this."
 
+### 5. Don't blame the framework by default (Tip #33 — "select" Isn't Broken)
+
+Before patching around a framework / compiler / runtime
+behavior, prove it. The default assumption is **your
+code is wrong**; the framework is right ~99% of the time
+because millions of other users land on the same path
+daily.
+
+Required steps before blaming a framework / compiler /
+runtime:
+
+1. **Read the error message carefully.** The framework
+   usually tells you what's wrong (or where to look) — see
+   §1 above.
+2. **Run the documented reproducer.** If the framework
+   ships a minimal example, run it. If yours diverges
+   from theirs, that's evidence of *your* bug, not the
+   framework's.
+3. **Search the framework's issue tracker.** If the bug is
+   "I expect X but got Y", and 12 people filed the same
+   thing, the framework has documented it. Read those
+   issues before opening a new one.
+4. **Strip back to the smallest reproducer.** Does the
+   bug reproduce in a 10-line script that *only* uses
+   the framework? If not, your app is doing something
+   the framework doesn't know about.
+5. **Cite the framework documentation in the PR.** When
+   you genuinely *do* blame the framework, your PR must
+   link the upstream issue + the doc passage that
+   contradicts the buggy behavior. Unsourced "the
+   framework is broken" claims are rejected.
+
+Per-adopter corollary: this rule is the framework-level
+case of the per-stack 'frameworks-don't-lie' pattern that
+recurs in `addenda/go-htmx.md` §'Bug catalog §1.*' (e.g.
+the Wails dialog-guard bug was *our* code crashing the
+WebView2 process; the WebView2 process itself was fine).
+
+Refs: Tip #33 in `docs/audit/pragmatic-programmer-audit-2026-07.md`.
+
 ## Bug class → first place to look
 
 Quick reference table for "the page does X wrong, where's
