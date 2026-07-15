@@ -33,6 +33,30 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
   → addenda/go-htmx.md §routebuilder; internal/uiids → addenda/go-htmx.md
   §uiids; internal/architecture/architecture_test.go → addenda/go-htmx.md
   HTMX-specific guard tests; etc.).
+- `core/tdd.md` §Contract touch (new) — port DixieData
+  commit `4edde6c` (#587): prospective DbC discipline for
+  new or materially changed public seams. Five dimensions
+  (preconditions, postconditions, failure modes, state
+  effects, idempotency/concurrency); enforcement-site ranking
+  (types → DB constraints → typed errors → architecture tests
+  → behavior tests → developer-impossible-state panics);
+  exported doc comments state the source-level contract, the
+  RED test proves it. Ports DixieData-specific surface
+  citations (Wails adapter, internal/architecture/architecture_test.go)
+  to agent-stack framework equivalents (per-addendum adapters
+  and architecture tests).
+- `core/feature-protocol.md` — rewrite pre-flight TDD
+  anchor bullet to "TDD + contract anchor"; add new
+  "Contract touch" sibling to Acceptance criteria in the
+  slice-plan rules. Points at `tdd.md` §Contract touch.
+- `core/pragmatic-principles.md` — add §1.5 "Repo
+  operational form" bullet pointing at `tdd.md`
+  §Contract touch; add "Prospective contract-touch rule"
+  paragraph (pragmatic DbC, not Meyer-style runtime
+  contract); rewrite tip-index rows #37 (Design with
+  Contracts) and #39 (Use Assertions to Prevent the
+  Impossible) to point at the prospective rule and
+  enforcement-site ranking.
 
 ### Added
 - `core/complexity.md` — principles doc pairing with `feature-protocol.md`
@@ -41,6 +65,15 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
   tactical-vs-strategic programming, Hickey's decomplecting, the rule of
   three, mechanical-boundary enforcement, theory-as-deliverable (Naur),
   boring technology (McKinley), entropy budgeting (Lehman).
+- `core/commit-and-branch.md` — close-on-merge discipline
+  for adopting repos using GitHub Issues. New "Closing the
+  issue when the work ships" section with three paths
+  (commit-subject `(#N)`, commit-body `Closes #N`, periodic
+  sweep) and four anti-patterns (trusting auto-close, parens
+  breadcrumb, close-without-comment, ship-and-leave-open).
+  Ports DixieData commit `9bd3eec`. Extends the
+  Commit-message-shape rule with "Closing the issue is part
+  of the slice, not a follow-up."
 - `skills/consensus-hunter/` — multi-agent LLM bug-hunting skill, modelled
   on Craven's Bayesian submarine-search idea. Five evidence slices per run
   (static, history, tests, contract, spec) aggregated in logit space with
