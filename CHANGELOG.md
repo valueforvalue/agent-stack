@@ -9,6 +9,31 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
 
 ## [Unreleased]
 
+### Changed
+- `core/pragmatic-principles.md` — port DixieData commit
+  `3c4fbc0` corrections: (1) §6 tip-index drift fix (rows 53-79 had
+  +4-position title drift; 4 canonical tips were missing — #52
+  Prefer Interfaces, #58 Random Failures, #80 Project Glossary, #97
+  Sign Your Work; row #73 was mislabeled 'Sign Your Work' instead of
+  canonical 'Apply Security Patches Quickly'). All 100 rows rebuilt
+  against the canonical 20th Anniversary Edition tip list
+  (https://pragprog.com/tips/). (2) Spine: added §1.17 Pragmatic
+  Projects (Ch 9, anchor Tip #96) + §1.18 Before the Project (Ch 8,
+  anchor Tip #75). Renamed §1.10 from 'It's Just a View (MVC)' to
+  'Take Small Steps (Tracer Bullets + MVC seam)' so the spine title
+  matches its anchor Tip #42. Header bumped 16 → 18 principles. §3
+  cross-ref table updated. (3) §6 actionability upgrade: dropped the
+  110-char evidence truncation; added 'When to consult this table'
+  preamble (4 use cases); renamed column 'One-line evidence' →
+  'Evidence / how to apply'; rewrote rows with imperative '*How to
+  apply:*' / '*When violated:*' prose. Added §9 Book chapter → tip
+  cross-reference appendix. §7 counts updated to 62 Enforced / 23
+  Partial / 2 Gap / 13 N/A. All Dixie-specific citations re-translated
+  to framework surfaces (CONTEXT.md → core/laws.md; internal/routebuilder
+  → addenda/go-htmx.md §routebuilder; internal/uiids → addenda/go-htmx.md
+  §uiids; internal/architecture/architecture_test.go → addenda/go-htmx.md
+  HTMX-specific guard tests; etc.).
+
 ### Added
 - `core/complexity.md` — principles doc pairing with `feature-protocol.md`
   §Module discipline and `session-protocol.md` Rule 3 (YAGNI). Reconciles
