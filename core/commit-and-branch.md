@@ -22,10 +22,19 @@ decomposition rules.
 
 `<area>: <imperative summary>` for the subject (≤72 chars),
 blank line, then 1–3 bullets explaining *why* and what the
-regression net is. Reference the issue number if one exists.
+regression net is. Reference the issue number if one exists
+(`issue #130`). Look at recent commits with
+`git log --oneline -20` for the in-repo house style before
+writing your first commit.
 
-Look at recent commits with `git log --oneline -20` for the
-in-repo house style before writing your first commit.
+**Closing the issue is part of the slice, not a follow-up.**
+The agent that lands the final slice must close the tracking
+issue in the same turn. Wrap the issue number in parens at
+the end of the subject for human-readable grep
+(`(#N)` is a breadcrumb, not a closing keyword). See
+§"Closing the issue when the work ships" below for the
+full discipline, including the sweep fallback for issues
+that slipped through.
 
 ### Conventional Commits prefix
 
@@ -54,6 +63,81 @@ finer-grained categorization.
   without a slice plan. Open a separate PR.
 - **"WIP" commit** pushed to a shared branch. Use a draft
   PR or hold locally.
+- **Ship the slice, leave the issue open "for the user to
+  close".** Closing is part of the slice. The user is not
+  always watching; the issue rots.
+
+## Closing the issue when the work ships
+
+Adopting repos that use GitHub Issues must close the tracking
+issue in the same turn that lands the final slice. The
+default single-branch flow lands work as direct commits to
+the integration branch rather than via merged PRs, so
+GitHub's auto-close-via-keyword path (`fixes #N` in a PR
+body) does not fire. **All closed issues in a direct-commit
+repo were closed manually.** That is the dangling-issues
+trap: a slice ships, the agent moves on, the issue stays
+open forever.
+
+**The discipline:** the commit subject that lands the final
+slice of an issue MUST close the issue. The closing step is
+part of the slice, not a follow-up. Three equivalent paths:
+
+### Path A: Include the issue number in the commit subject
+
+If the issue number is in the commit subject, the closing
+step is:
+
+```bash
+gh issue close <N> --comment "Closed — landed in <short-sha>: <subject>"
+```
+
+The subject format `<area>: <imperative> (#N)` (the
+in-repo convention) makes the issue number easy to grep
+for. **The `(#N)` at the end of the subject is a breadcrumb,
+not a GitHub auto-close keyword.** Wrap it in parens or
+append it after a colon and GitHub will NOT auto-close —
+that's why the agent must close manually.
+
+### Path B: `Closes #N` in the commit body
+
+If the subject doesn't have the issue number, add
+`Closes #N` to the commit body (last bullet, separated by a
+blank line so GitHub picks it up). Still requires
+`gh issue close <N>` after the commit lands, since direct
+commits don't open PRs — the `Closes` keyword only fires on
+merged PR bodies.
+
+### Path C: Periodic sweep
+
+For issues that slipped through the cracks (work shipped
+but no `(#N)` breadcrumb, no close comment), run a sweep:
+
+```bash
+# Find open issues whose number appears in any
+# commit subject across the last 90 days:
+gh issue list --state open --json number,title --jq '.[] | .number' \
+  | while read n; do
+      if git log --since="90 days ago" --format='%s' \
+         | grep -qE "(#${n}\b|fixes? #${n}\b)"; then
+        echo "#$n likely shipped; review and close"
+      fi
+    done
+```
+
+The sweep is a fallback. Path A is the primary discipline.
+
+### Anti-patterns
+
+- **Trust `fixes #N` in the commit body to auto-close.** It
+  won't in a direct-commit repo — there's no PR. The keyword
+  only fires on merged PR bodies.
+- **Trust `(#N)` at the end of the subject to auto-close.**
+  Same reason — GitHub's parser sees the parens and ignores
+  it. It's a breadcrumb for humans, not a closing keyword.
+- **Close without a comment.** A close-with-no-comment
+  loses the ship evidence. Future agents reading the issue
+  need to know which commit landed the fix.
 
 ## Branch policy
 

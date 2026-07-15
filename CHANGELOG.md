@@ -9,6 +9,55 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
 
 ## [Unreleased]
 
+### Changed
+- `core/pragmatic-principles.md` — port DixieData commit
+  `3c4fbc0` corrections: (1) §6 tip-index drift fix (rows 53-79 had
+  +4-position title drift; 4 canonical tips were missing — #52
+  Prefer Interfaces, #58 Random Failures, #80 Project Glossary, #97
+  Sign Your Work; row #73 was mislabeled 'Sign Your Work' instead of
+  canonical 'Apply Security Patches Quickly'). All 100 rows rebuilt
+  against the canonical 20th Anniversary Edition tip list
+  (https://pragprog.com/tips/). (2) Spine: added §1.17 Pragmatic
+  Projects (Ch 9, anchor Tip #96) + §1.18 Before the Project (Ch 8,
+  anchor Tip #75). Renamed §1.10 from 'It's Just a View (MVC)' to
+  'Take Small Steps (Tracer Bullets + MVC seam)' so the spine title
+  matches its anchor Tip #42. Header bumped 16 → 18 principles. §3
+  cross-ref table updated. (3) §6 actionability upgrade: dropped the
+  110-char evidence truncation; added 'When to consult this table'
+  preamble (4 use cases); renamed column 'One-line evidence' →
+  'Evidence / how to apply'; rewrote rows with imperative '*How to
+  apply:*' / '*When violated:*' prose. Added §9 Book chapter → tip
+  cross-reference appendix. §7 counts updated to 62 Enforced / 23
+  Partial / 2 Gap / 13 N/A. All Dixie-specific citations re-translated
+  to framework surfaces (CONTEXT.md → core/laws.md; internal/routebuilder
+  → addenda/go-htmx.md §routebuilder; internal/uiids → addenda/go-htmx.md
+  §uiids; internal/architecture/architecture_test.go → addenda/go-htmx.md
+  HTMX-specific guard tests; etc.).
+- `core/tdd.md` §Contract touch (new) — port DixieData
+  commit `4edde6c` (#587): prospective DbC discipline for
+  new or materially changed public seams. Five dimensions
+  (preconditions, postconditions, failure modes, state
+  effects, idempotency/concurrency); enforcement-site ranking
+  (types → DB constraints → typed errors → architecture tests
+  → behavior tests → developer-impossible-state panics);
+  exported doc comments state the source-level contract, the
+  RED test proves it. Ports DixieData-specific surface
+  citations (Wails adapter, internal/architecture/architecture_test.go)
+  to agent-stack framework equivalents (per-addendum adapters
+  and architecture tests).
+- `core/feature-protocol.md` — rewrite pre-flight TDD
+  anchor bullet to "TDD + contract anchor"; add new
+  "Contract touch" sibling to Acceptance criteria in the
+  slice-plan rules. Points at `tdd.md` §Contract touch.
+- `core/pragmatic-principles.md` — add §1.5 "Repo
+  operational form" bullet pointing at `tdd.md`
+  §Contract touch; add "Prospective contract-touch rule"
+  paragraph (pragmatic DbC, not Meyer-style runtime
+  contract); rewrite tip-index rows #37 (Design with
+  Contracts) and #39 (Use Assertions to Prevent the
+  Impossible) to point at the prospective rule and
+  enforcement-site ranking.
+
 ### Added
 - `core/complexity.md` — principles doc pairing with `feature-protocol.md`
   §Module discipline and `session-protocol.md` Rule 3 (YAGNI). Reconciles
@@ -16,6 +65,15 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
   tactical-vs-strategic programming, Hickey's decomplecting, the rule of
   three, mechanical-boundary enforcement, theory-as-deliverable (Naur),
   boring technology (McKinley), entropy budgeting (Lehman).
+- `core/commit-and-branch.md` — close-on-merge discipline
+  for adopting repos using GitHub Issues. New "Closing the
+  issue when the work ships" section with three paths
+  (commit-subject `(#N)`, commit-body `Closes #N`, periodic
+  sweep) and four anti-patterns (trusting auto-close, parens
+  breadcrumb, close-without-comment, ship-and-leave-open).
+  Ports DixieData commit `9bd3eec`. Extends the
+  Commit-message-shape rule with "Closing the issue is part
+  of the slice, not a follow-up."
 - `skills/consensus-hunter/` — multi-agent LLM bug-hunting skill, modelled
   on Craven's Bayesian submarine-search idea. Five evidence slices per run
   (static, history, tests, contract, spec) aggregated in logit space with

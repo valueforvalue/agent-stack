@@ -25,9 +25,15 @@ Tick these before any recon:
       touches multiple layers.
 - [ ] **Index** — read the repo's docs-index to know which
       tier-1/2 docs to load for this task.
-- [ ] **TDD anchor** — read [`tdd.md`](tdd.md). Every slice
-      pins its user-facing acceptance criterion with a
-      failing test BEFORE the slice lands.
+- [ ] **TDD + contract anchor** — read [`tdd.md`](tdd.md).
+      Every slice pins its user-facing acceptance criterion
+      with a failing test BEFORE the slice lands. New
+      behavior and materially changed public seams also get
+      a contract touch: document caller obligations and
+      observable guarantees, then prove relevant claims at
+      the seam (see [`tdd.md`](tdd.md) §"Contract touch").
+      The TDD protocol sits inside the vertical-slice
+      discipline above; it does not replace it.
 
 ## When to use
 
@@ -209,6 +215,16 @@ glossary is the contract.
 
 **Acceptance criteria** are testable in 5 minutes by a
 human with the build.
+
+**Contract touch** names each new or materially changed
+public seam (service method, handler, DTO, builder, exported
+helper, or durable data boundary), its caller obligations,
+and its observable guarantees. Use `N/A — mechanical change`
+for formatting, renames, generated output, and other edits
+that do not alter behavior. Do not expand the slice to
+retrofit untouched code. The matching RED test proves
+relevant claims at the seam; see [`tdd.md`](tdd.md)
+§"Contract touch".
 
 **Slice plan** mirrors the 3-tier commit rule. Each slice
 names its tier in the subject and ships the whole tier in
