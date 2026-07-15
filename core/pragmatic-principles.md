@@ -255,6 +255,29 @@ is the runtime check.
   (e.g. `addenda/go-htmx.md` HTMX-specific guard tests).
 - The adopting repo's smoke probes — behavioral postconditions
   for the HTTP surface.
+- [`tdd.md`](tdd.md) §"Contract touch" — prospective rule for
+  new behavior and materially changed public seams. The RED
+  test makes relevant caller obligations and observable
+  guarantees executable.
+
+**Prospective contract-touch rule:** every new or materially
+changed public seam leaves with a clearer documented and
+executable contract than it had before. State the relevant
+preconditions, postconditions, failure modes, state/atomicity
+effects, and idempotency/concurrency rules; omit dimensions
+that do not apply. Apply this to existing code when a
+behavioral slice materially touches its seam, not through a
+backlog-wide retrofit. Mechanical edits do not trigger
+contract churn.
+
+This is pragmatic DbC, not a Meyer-style runtime contract
+system. Do not add generic `Require`, `Ensure`, or
+`Invariant` helpers. Prefer typed languages' type system,
+typed builders, database constraints, service validation and
+typed errors, architecture tests, and behavior tests. Reserve
+panics for developer-created impossible states; ordinary user
+input and recoverable failures return through the seam's
+documented error path.
 
 **When you might violate:**
 - **Third-party library contracts** — when the repo wraps a
@@ -959,9 +982,9 @@ The full evidence per tip lives in the source audit at
 | 34 | Don't Assume It—Prove It | ✅ | §1.6 Dead Programs | [`tdd.md`](tdd.md) §"What's the seam?" + the per-layer recipes (handler test, smoke probe, migration test) mandate asserting the actual state, not the expected state. *How to apply:* a function's doc-comment carries the per-iter SQL footprint (count of SELECTs, INSERTs, transactions); the test asserts the footprint, not just the output. |
 | 35 | Learn a Text Manipulation Language | ➖ | — (philosophy / technique, not a principle) | N/A at the framework level. Per-adopter concern. |
 | 36 | You Can't Write Perfect Software | ✅ | §1.5 Design by Contract | [`laws.md`](laws.md) §"No unguarded re-entrant UI calls" + §"Tier-0 docs have a size ceiling" are earned-by-real-bug laws. *How to apply:* every error path either crashes early or surfaces a clear toast; a silent fallback (returning `nil, nil` on error, swallowing a panic) is the violation. |
-| 37 | Design with Contracts | ✅ | §1.5 Design by Contract | [`laws.md`](laws.md) §"Doc comments on exported identifiers" is the contract floor. [`code-changes.md`](code-changes.md) is the cross-layer contract. Per-addendum architecture tests are the package-contract enforcement. *How to apply:* every exported function's doc-comment names the preconditions (input invariants), postconditions (return values + error semantics), and side effects. A doc-comment without these is incomplete. |
+| 37 | Design with Contracts | ✅ | §1.5 Design by Contract | [`tdd.md`](tdd.md) §"Contract touch" is the prospective function- and boundary-contract rule; per-addendum architecture tests enforce package contracts. *How to apply:* every new or materially changed public seam documents relevant caller obligations, observable guarantees, failure/state semantics, and retry/concurrency behavior; its RED test proves those claims. Skip mechanical edits and untouched code. Prefer types, constraints, typed errors, and tests over generic runtime assertion helpers. |
 | 38 | Crash Early | ✅ | §1.5 Design by Contract | [`laws.md`](laws.md) §"No unguarded re-entrant UI calls" — crashing early preserves the UI thread. Per-addendum: the typed-attribute swap allowlist (e.g. `htmxattr.Mux` in Go) panics at render time on an invalid value. *How to apply:* an unreachable code path should panic, not silently return. The panic is the agent's "the world is broken" signal; swallowing it is the violation. |
-| 39 | Use Assertions to Prevent the Impossible | ✅ | §1.5 Design by Contract | The per-addendum typed builders + DOM-ID registry IDs all assert at compile time. The doc-comment floor enforces the assertion-via-documentation pattern. *How to apply:* if the type system can't express the invariant, a runtime assertion at the boundary catches the impossible case. The `nil` check at the top of every public method is the cheap form. |
+| 39 | Use Assertions to Prevent the Impossible | ✅ | §1.5 Design by Contract | Per-addendum typed builders + DOM-ID registries prevent invalid states at construction time. The doc-comment floor enforces the assertion-via-documentation pattern. *How to apply:* prefer types, builders, database constraints, validation, and typed errors. Use a runtime panic only for a developer-created impossible state; never panic for ordinary user input, recoverable I/O, or third-party failure. |
 | 40 | Finish What You Start | ⚠️ | — (philosophy / technique, not a principle) | The pattern lives in adopting repos via `defer` (Go) / `try/finally` (Python) / effect-cleanup (React). [`session-protocol.md`](session-protocol.md) names the principle implicitly but no framework-level guard test pins it. *When violated:* a resource opened without a defer / unsubscribe / cleanup. *How to apply:* every `Open()` / `Lock()` / goroutine launch is paired with `defer Close()` / `defer Unlock()` / a context-aware wait. |
 | 41 | Act Locally | ⚠️ | — (philosophy / technique, not a principle) | [`complexity.md`](complexity.md) §"Two-adapter rule" prescribes local interfaces, but no named rule for "locality of state." Implicit in the deep-module discipline (variables live at the function or module scope, not at the package scope). *When violated:* a package-level mutable variable. *How to apply:* a `var foo = ...` at the package level is the violation; pass the value into the function or hold it on the per-process struct. |
 | 42 | Take Small Steps—Always | ✅ | §1.10 Take Small Steps | [`rpci.md`](rpci.md) §I — Implement: "the first slice is the only slice that runs in the same session." Fresh-context-per-slice is the operational form. *How to apply:* a slice plan that lists >5 files touched is doing two things; split it. |
