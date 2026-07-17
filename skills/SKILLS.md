@@ -15,62 +15,68 @@ Each entry has:
   (`framework-bundled`, `upstream:<catalog>`, or
   `upstream:<github-repo>`)
 - **version** — semver of the bundled body
-- **checksum** — sha256 of the SKILL.md body at this
-  manifest version
+- **checksum** — sha256 of the complete bundled package at this
+  manifest version. Hash sorted relative paths and LF-normalized file
+  bytes using same algorithm as `scripts/dedupe-skills.sh`. Use `-` for
+  planned entries whose body has not shipped yet.
 - **supersedes** — optional list of upstream skill names
   this skill replaces (when the framework version is the
   preferred one)
 - **load-when** — short description of when the agent
   should load this skill
 
-`scripts/dedupe-skills.sh` reads this manifest, walks the
-user's installed skill catalog (`~/.pi/agent/skills/`,
+`scripts/dedupe-skills.sh` validates each shipped package checksum,
+walks the user's installed skill catalog (`~/.pi/agent/skills/`,
 `~/.agents/skills/`, project `.pi/skills/`, project
-`.agents/skills/`), reports overlaps, and exits 0 (or 1 with
-`--strict`).
+`.agents/skills/`), and reports direct-name plus `supersedes`
+overlaps. It exits 1 on checksum drift, or on overlap when run with
+`--strict`.
 
-## v0.1.0 manifest (Slice 2 will fill bodies)
+## v0.1.0 manifest
 
-| Name | Source | Version | Supersedes | Load when |
-|---|---|---|---|---|
-| `tdd` | `framework-bundled` | `0.1.0` | (none yet) | Any feature or bug fix |
-| `rpci` | `framework-bundled` | `0.1.0` | (none yet) | Non-trivial work (3+ files or design questions) |
-| `diagnose` | `framework-bundled` | `0.1.0` | `upstream:diagnose`, `upstream:systematic-debugging`, `upstream:diagnosing-bugs` | Hard bug or performance regression |
-| `tracer-bullets` | `framework-bundled` | `0.1.0` | `upstream:tracer-bullets` | Building multi-layer features |
-| `find-skills` | `framework-bundled` | `0.1.0` | `upstream:find-skills` | User asks "is there a skill for X" |
-| `grilling` | `framework-bundled` | `0.1.0` | `upstream:grilling` | User invokes "grill me on this plan" |
-| `bulk-read` | `framework-bundled` | `0.1.0` | `upstream:bulk-read` | User asks to read all files in a folder |
-| `learn-from-mistakes` | `framework-bundled` | `0.1.0` | `upstream:learn-from-mistakes` | Workspace has a MISTAKES.md file |
-| `lock-requirements` | `framework-bundled` | `0.1.0` | `upstream:lock-requirements` | Feature request with overloaded terms |
-| `codebase-design` | `framework-bundled` | `0.1.0` | `upstream:codebase-design` | Designing a module's interface |
-| `deep-module-engineer` | `framework-bundled` | `0.1.0` | `upstream:deep-module-engineer` | Refactoring module boundaries |
-| `scope-boundary-gate` | `framework-bundled` | `0.1.0` | `upstream:scope-boundary-gate` | Work risks scope creep |
-| `design-an-interface` | `framework-bundled` | `0.1.0` | `upstream:design-an-interface` | Comparing interface options |
-| `frontend-design` | `framework-bundled` | `0.1.0` | `upstream:frontend-design` | Building a new page or full layout |
-| `domain-modeling` | `framework-bundled` | `0.1.0` | `upstream:domain-modeling` | Building / sharpening the glossary |
-| `isolate-test-scope` | `framework-bundled` | `0.1.0` | `upstream:isolate-test-scope` | Test runtimes are high |
-| `verify-generation-state` | `framework-bundled` | `0.1.0` | `upstream:verify-generation-state` | Editing generated assets |
-| `write-a-skill` | `framework-bundled` | `0.1.0` | `upstream:write-a-skill` | User wants to author a skill |
-| `consensus-hunter` | `framework-bundled` | `0.1.0` | (none yet) | Pre-commit / pre-merge structured risk scan; complements `bug-hunter` with a faster read-only phase producing persisted per-function risk scores |
+| Name | Source | Version | Checksum | Supersedes | Load when |
+|---|---|---|---|---|---|
+| `tdd` | `framework-bundled` | `0.1.0` | `-` | (none yet) | Any feature or bug fix |
+| `rpci` | `framework-bundled` | `0.1.0` | `-` | (none yet) | Non-trivial work (3+ files or design questions) |
+| `diagnose` | `framework-bundled` | `0.1.0` | `-` | `upstream:diagnose`, `upstream:systematic-debugging`, `upstream:diagnosing-bugs` | Hard bug or performance regression |
+| `tracer-bullets` | `framework-bundled` | `0.1.0` | `-` | `upstream:tracer-bullets` | Building multi-layer features |
+| `find-skills` | `framework-bundled` | `0.1.0` | `-` | `upstream:find-skills` | User asks "is there a skill for X" |
+| `grilling` | `framework-bundled` | `0.1.0` | `-` | `upstream:grilling` | User invokes "grill me on this plan" |
+| `bulk-read` | `framework-bundled` | `0.1.0` | `-` | `upstream:bulk-read` | User asks to read all files in a folder |
+| `learn-from-mistakes` | `framework-bundled` | `0.1.0` | `-` | `upstream:learn-from-mistakes` | Workspace has a MISTAKES.md file |
+| `lock-requirements` | `framework-bundled` | `0.1.0` | `-` | `upstream:lock-requirements` | Feature request with overloaded terms |
+| `codebase-design` | `framework-bundled` | `0.1.0` | `-` | `upstream:codebase-design` | Designing a module's interface |
+| `deep-module-engineer` | `framework-bundled` | `0.1.0` | `-` | `upstream:deep-module-engineer` | Refactoring module boundaries |
+| `scope-boundary-gate` | `framework-bundled` | `0.1.0` | `-` | `upstream:scope-boundary-gate` | Work risks scope creep |
+| `design-an-interface` | `framework-bundled` | `0.1.0` | `-` | `upstream:design-an-interface` | Comparing interface options |
+| `frontend-design` | `framework-bundled` | `0.1.0` | `-` | `upstream:frontend-design` | Building a new page or full layout |
+| `domain-modeling` | `framework-bundled` | `0.1.0` | `-` | `upstream:domain-modeling` | Building / sharpening the glossary |
+| `isolate-test-scope` | `framework-bundled` | `0.1.0` | `-` | `upstream:isolate-test-scope` | Test runtimes are high |
+| `verify-generation-state` | `framework-bundled` | `0.1.0` | `-` | `upstream:verify-generation-state` | Editing generated assets |
+| `write-a-skill` | `framework-bundled` | `0.1.0` | `-` | `upstream:write-a-skill` | User wants to author a skill |
+| `pragmatic-programmer` | `framework-bundled` | `2.0.0` | `daf559117f165762ea93815805f2fb904fff890790456ea0badb7bd509546104` | `upstream:pragmatic-programmer` | Best practices, craftsmanship, DRY, technical debt, reversibility, estimation, or build-vs-buy decisions |
+| `consensus-hunter` | `framework-bundled` | `0.1.0` | `d3fbc4561ce99493221b653f3f156b0dda05d13d73a486c60d975ae41e5c49ce` | (none yet) | Pre-commit / pre-merge structured risk scan; complements `bug-hunter` with a faster read-only phase producing persisted per-function risk scores |
 
 ## Dedupe contract
 
 `scripts/dedupe-skills.sh` reports:
 
-- For each entry in this manifest, whether the user has
-  the listed `source` installed and at what version.
-- For each upstream skill named in `supersedes`, whether
-  the user has that skill installed and at what version.
+- Whether every shipped package matches its manifest checksum.
+- Every exact installed-name overlap.
+- Every installed skill named by a bundled row's `supersedes` field.
 - A recommendation per pair:
-  - `keep-framework` — framework-bundled version is newer
-  - `keep-upstream` — upstream version is newer (default)
-  - `keep-both` — divergent bodies, user must choose
-  - `drop-both` — neither is referenced by the user
+  - `keep-framework` - framework-bundled version is newer or policy explicitly prefers it
+  - `keep-upstream` - installed version is not older or policy explicitly prefers it
+  - `keep-both` - version evidence is unavailable, so user must choose
 
-The default behavior: **keep upstream unless
-framework-bundled is newer** (per the resolved Q-E from
-`PLAN.md`). The user can flip with
-`--prefer=framework|upstream|none`.
+The default behavior: keep upstream unless framework-bundled is newer.
+The user can override with `--prefer=framework|upstream|none`.
+`--apply` remains advisory and never deletes user files.
+
+`scripts/init.sh` writes `.agent-stack-owned` inside skill packages it
+creates. That marker permits idempotent additions and selective
+`--uninit`; uninit removes whole marked package, including local edits.
+Pre-existing packages are never marked or removed.
 
 ## Adding a new bundled skill
 
@@ -82,17 +88,19 @@ framework-bundled is newer** (per the resolved Q-E from
 3. Run `bash scripts/dedupe-skills.sh --dry-run` to verify
    the manifest parses cleanly.
 
-## Promoting an upstream skill to bundled
+## Promoting or adapting an upstream skill
 
-When the framework adopts an upstream skill:
+When framework adopts upstream skill:
 
-1. Copy the skill body into `skills/<name>/SKILL.md` with
-   a header attributing the source.
-2. Add the upstream catalog name to `source` (e.g.
-   `upstream:pi-aftc-toolset`).
-3. Add the upstream skill name to `supersedes` (the
-   framework-bundled version supersedes the upstream).
-4. Bump the version in the manifest.
+1. Decide ownership. Use `source: upstream:<catalog>` for a verbatim or
+   lightly attributed port. Use `source: framework-bundled` for a
+   framework-owned workflow that only adapts upstream ideas.
+2. Preserve upstream license and provenance in bundled package.
+3. Add upstream catalog name to `supersedes`.
+4. Give behavioral divergence a new framework semver rather than
+   presenting it as byte-compatible upstream release.
+5. Compute package checksum and run dedupe plus bootstrap regression
+   tests.
 
 ## References
 

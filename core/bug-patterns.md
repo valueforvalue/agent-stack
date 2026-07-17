@@ -337,8 +337,8 @@ runtime:
 Per-adopter corollary: this rule is the framework-level
 case of the per-stack 'frameworks-don't-lie' pattern that
 recurs in `addenda/go-htmx.md` §'Bug catalog §1.*' (e.g.
-the Wails dialog-guard bug was *our* code crashing the
-WebView2 process; the WebView2 process itself was fine).
+a desktop-host dialog-guard bug was *our* code crashing an
+embedded browser process; the host runtime itself was fine).
 
 Refs: Tip #33 in `docs/audit/pragmatic-programmer-audit-2026-07.md`.
 

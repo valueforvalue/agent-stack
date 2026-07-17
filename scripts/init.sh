@@ -12,7 +12,7 @@
 #   2. Branch model (single-branch vs three-branch)
 #   3. Include issues scaffolding (GH labels + templates)
 #   4. Which addendum(s) to include
-#   5. Which bundled skills to include (copies bodies to target)
+#   5. Which bundled skills to include (copies complete packages to target)
 #   6. README tone (terse vs polished)
 #
 # After the questions, the script:
@@ -20,7 +20,7 @@
 #   - Copies selected `addenda/*.md` to `target/docs/agents/addenda/`
 #   - Optionally copies `issues/` to `target/docs/agents/issues/`
 #   - Optionally copies `.github/ISSUE_TEMPLATE/`, `.github/PULL_REQUEST_TEMPLATE.md`
-#   - Optionally copies selected bundled skill bodies to `target/.pi/skills/` (or `.agents/skills/`)
+#   - Copies selected bundled skill packages to `target/.pi/skills/`
 #   - Writes `target/FRAMEWORK_BOOTSTRAP.md` with a session-start checklist
 #   - Optionally appends to `target/AGENTS.md`, `target/CONTEXT.md`, `target/CHANGELOG.md`
 #
@@ -108,6 +108,36 @@ copy_if_missing() {
   return 0
 }
 
+copy_skill_package() {
+  local src="$1"
+  local dst="$2"
+  local marker="$dst/.agent-stack-owned"
+
+  if [[ -d "$dst" && ! -f "$marker" ]]; then
+    echo "  [warn] $dst already exists and is not managed by agent-stack"
+    echo "         leaving existing skill package unchanged"
+    return 0
+  fi
+
+  if [[ ! -d "$dst" ]]; then
+    if [[ "$DRY_RUN" == "1" ]]; then
+      echo "  [would copy skill] $src → $dst"
+    else
+      mkdir -p "$dst"
+      cp -r "$src"/. "$dst"/
+      printf 'installed-by=agent-stack\n' > "$marker"
+      echo "  [copied skill] $dst"
+    fi
+    return 0
+  fi
+
+  # Managed package: preserve user edits while adding newly shipped files.
+  while IFS= read -r -d '' src_file; do
+    local relative="${src_file#"$src"/}"
+    copy_if_missing "$src_file" "$dst/$relative"
+  done < <(find "$src" -type f -print0)
+}
+
 copy_dir_if_missing() {
   local src="$1"
   local dst="$2"
@@ -150,6 +180,22 @@ if [[ "$UNINIT" == "1" ]]; then
       fi
     fi
   done
+
+  # Remove only skill packages created by this bootstrap. Existing project
+  # skills are never claimed or removed.
+  skills_root="$TARGET/.pi/skills"
+  if [[ -d "$skills_root" ]]; then
+    while IFS= read -r -d '' marker; do
+      skill_dir="$(dirname "$marker")"
+      if [[ "$DRY_RUN" == "1" ]]; then
+        echo "  [would remove] $skill_dir"
+      else
+        rm -rf "$skill_dir"
+        echo "  [removed] $skill_dir"
+      fi
+    done < <(find "$skills_root" -mindepth 2 -maxdepth 2 -type f -name .agent-stack-owned -print0)
+  fi
+
   echo "Uninit complete."
   exit 0
 fi
@@ -196,11 +242,11 @@ Q4_ADDENDA=$(ask "Addenda" "$Q4_DEFAULT")
 echo
 echo "Question 5/6: Which bundled skills to include?"
 echo "  Comma-separated list of skill names from SKILLS.md manifest."
-echo "  Default: none. Slice 2 of PLAN.md ships skill bodies; until"
-echo "  then, selecting a skill name will emit a warning and copy nothing."
+echo "  Default: pragmatic-programmer. Enter none to skip bundled skills."
+echo "  Complete skill packages, including references and scripts, are copied."
 echo "  See skills/SKILLS.md for the manifest and dedupe-skills.sh"
 echo "  to detect overlap with your installed skill catalog."
-Q5_SKILLS=$(ask "Bundled skills" "none")
+Q5_SKILLS=$(ask "Bundled skills" "pragmatic-programmer")
 
 echo
 echo "Question 6/6: README tone for FRAMEWORK_BOOTSTRAP.md?"
@@ -278,17 +324,27 @@ if [[ -n "$Q5_SKILLS" && "$Q5_SKILLS" != "none" ]]; then
   IFS=',' read -ra SKILLS_LIST <<<"$Q5_SKILLS"
   for skill in "${SKILLS_LIST[@]}"; do
     skill="$(echo "$skill" | sed 's/^ *//;s/ *$//')"
-    src="$FRAMEWORK_ROOT/skills/${skill}/SKILL.md"
-    if [[ -f "$src" ]]; then
-      copy_if_missing "$src" "$TARGET/.pi/skills/${skill}/SKILL.md"
+    src="$FRAMEWORK_ROOT/skills/${skill}"
+    dst="$TARGET/.pi/skills/${skill}"
+    if [[ -f "$src/SKILL.md" ]]; then
+      for installed_skill in \
+        "$HOME/.pi/agent/skills/${skill}/SKILL.md" \
+        "$HOME/.agents/skills/${skill}/SKILL.md" \
+        "$TARGET/.agents/skills/${skill}/SKILL.md"; do
+        if [[ -f "$installed_skill" ]]; then
+          echo "  [warn] skill collision: $installed_skill"
+          echo "         harness load order may prefer existing copy; run dedupe-skills.sh"
+        fi
+      done
+      copy_skill_package "$src" "$dst"
     else
-      echo "  [warn] skill body $skill not shipped in v0.1.0 (Slice 2 of PLAN.md will add it)"
+      echo "  [warn] skill package $skill not shipped at $src"
       echo "         manifest entry: skills/SKILLS.md ($skill)"
-      echo "         skipping — re-run init.sh after upgrading to a Slice 2 release"
+      echo "         skipping"
     fi
   done
 else
-  echo "  (no skills selected; you can copy them later)"
+  echo "  (no skills selected)"
 fi
 
 # ---------- 6. Write FRAMEWORK_BOOTSTRAP.md --------------------------------

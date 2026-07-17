@@ -66,8 +66,8 @@ Three patterns where the principles *legitimately* need a local
 override:
 
 - **Bridges / adapter code** — every concrete stack has
-  adapters that absorb the shape of the world (HTMX attribute
-  strings, Wails dialog semantics, OS path quirks). DRY is
+  adapters that absorb the shape of the world (framework attribute
+  strings, desktop-host dialog semantics, OS path quirks). DRY is
   enforced by these adapters; DRY is *not* enforced inside the
   adapters (the adapter is the one place where the duplicated
   shape gets collapsed). See e.g. `addenda/go-htmx.md` for the
@@ -161,8 +161,8 @@ expensive, and the cost grows with the system.
   orthogonality; they earn it by being the smallest possible
   cross-cutting surface.
 - **DI across a host binding** — when a service is constructed
-  in the host entrypoint and passed to a framework binding (Wails
-  binding, Electron IPC handler, etc.), the binding *does* know
+  in the host entrypoint and passed to a framework binding (a desktop
+  binding, an IPC handler, etc.), the binding *does* know
   about the service. The host-app shape forces this. The
   mitigation is "binding is a thin wrapper, service holds the
   logic" (the seam rule from
@@ -192,13 +192,12 @@ the most scrutiny.
   Reversible), with the downgrade SQL pinned per migration.
 
 **When you might violate:**
-- **Host runtime commitment** — e.g. Wails v2.12.0, Electron, Tauri.
-  A future major-version migration is the hardest reversibility
-  problem in many repos. The mitigation is *named, local*
+- **Host runtime commitment** — e.g. a pinned desktop-host runtime or
+  embedded-browser framework. A future major-version migration is the hardest
+  reversibility problem in many repos. The mitigation is *named, local*
   workarounds that a future migration can find and remove (per
-  `addenda/go-htmx.md` §"Framework quirks" — the
-  `Wails-PATCH` / `Wails-FormData` workaround comments are the
-  pattern).
+  `addenda/go-htmx.md` §"Framework quirks" — tagged patch and form-data
+  workaround comments are the pattern).
 - **Schema changes that are non-reversible** — `CREATE TABLE`
   without a corresponding `DROP TABLE` in the downgrade. The
   classification is the *honest* signal: future readers know
@@ -379,10 +378,9 @@ race conditions. Explicit concurrency makes the time dimension
 *part of the API*.
 
 **Repo operational form:**
-- Per-process actor state (the Wails `App` struct, the Electron
-  main process, Tauri main, etc.) — equivalent to an actor. The
-  actor holds all state; goroutines / handlers receive a
-  pointer.
+- Per-process actor state (the desktop host's application struct or
+  main process) - equivalent to an actor. The actor holds all state;
+  goroutines / handlers receive a pointer.
 - The hungry-consumer model in background-job workers.
 - The in-flight dedup pattern (`LoadOrStore` + `defer Delete`)
   is a per-slot mutex.
@@ -576,9 +574,8 @@ operator will get it slightly different. Automation is the
 - The adopting repo's `scripts/` + `Makefile` / `package.json`
   targets + CI workflows.
 - The agent-stack CLI surface: any documented CLI / make
-  target should be enforced by a coverage check (DixieData's
-  `cli-coverage.mjs` is the reference pattern; per-adopter
-  concern).
+  target should be enforced by a coverage check. A per-adopter
+  `cli-coverage` script is the reference pattern.
 
 **When you might violate:**
 - **One-time setup** — a single `git mv` is fine by hand; a
@@ -1002,16 +999,16 @@ The full evidence per tip lives in the source audit at
 | 54 | Use Mixins to Share Functionality | ➖ | — (philosophy / technique, not a principle) | N/A in Go (no mixins). Embedding structs is the closest analog; the per-addendum dialog-guard mutex and the per-handler `inFlight` pattern (per `addenda/go-htmx.md` §"Stack laws") are embedded once and reused. *When violated:* a struct copy-pastes a method instead of embedding the type that owns it. |
 | 55 | Parameterize Your App Using External Configuration | ✅ | — (philosophy / technique, not a principle) | The Makefile / `package.json` + `.github/workflows/*.yml` + `templates/CONTEXT.md.tmpl` are the build-time config. Per-adopter external config (env vars, settings files, `local_settings` analog) is a per-stack pattern. *How to apply:* a constant in source code that the user might want to change is the violation; move it to a config file or to the Makefile. |
 | 56 | Analyze Workflow to Improve Concurrency | ✅ | §1.9 Temporal Coupling | The per-addendum export flow (PDF / JSON / archive) is jobs-based; the user gets a toast + the jobs page updates in parallel. The toast-header contract decouples the click from the work. *How to apply:* a handler that does the work inline (blocks the response for >500ms) is the violation; move the work to a job, return a 202 with a job ID. |
-| 57 | Shared State Is Incorrect State | ✅ | — (philosophy / technique, not a principle) | The dialog-guard mutex + the per-process struct pattern (e.g. Wails `App`, Electron main, Tauri main) + the per-job worker context. [`laws.md`](laws.md) §"No unguarded re-entrant UI calls" is the operational form. *How to apply:* a goroutine / handler / worker that reads/writes a package-level variable is the violation; pass the per-process struct pointer, the worker owns no state of its own. |
+| 57 | Shared State Is Incorrect State | ✅ | — (philosophy / technique, not a principle) | The dialog-guard mutex + the per-process host struct + the per-job worker context. [`laws.md`](laws.md) §"No unguarded re-entrant UI calls" is the operational form. *How to apply:* a goroutine / handler / worker that reads/writes a package-level variable is the violation; pass the per-process struct pointer, the worker owns no state of its own. |
 | 58 | Random Failures Are Often Concurrency Issues | ✅ | — (philosophy / technique, not a principle) | Per-addendum race-stress workflow (e.g. `audit/race-stress.yml`) + per-adopter property-test gate (e.g. `internal/dates` dates property test). [`bug-patterns.md`](bug-patterns.md) §"Concurrency / dependency correctness" lists the AI-amplification evidence. *How to apply:* a flaky test is concurrency; run with `-race` (Go) or the language's race detector before assuming the test is broken. |
-| 59 | Use Actors For Concurrency Without Shared State | ⚠️ | — (philosophy / technique, not a principle) | The per-process struct (Wails `App`, Electron main, Tauri main) is passed by reference; not technically an actor. The per-addendum `jobs.Start` pattern (e.g. `internal/jobs/jobs.go` in the Go addendum) is the closest operational form. *When violated:* a goroutine / worker that mutates a value owned by the caller. *How to apply:* the rule is "the goroutine owns its state; the caller passes inputs and reads outputs through channels or a return-only interface." |
+| 59 | Use Actors For Concurrency Without Shared State | ⚠️ | — (philosophy / technique, not a principle) | The per-process host struct is passed by reference; not technically an actor. The per-addendum background-job pattern is the closest operational form. *When violated:* a goroutine / worker that mutates a value owned by the caller. *How to apply:* the rule is "the goroutine owns its state; the caller passes inputs and reads outputs through channels or a return-only interface." |
 | 60 | Use Blackboards to Coordinate Workflow | ➖ | §1.9 Temporal Coupling | N/A. Single-user single-process apps; no blackboard pattern. |
 | 61 | Listen to Your Inner Lizard | ⚠️ | §1.9 Temporal Coupling | Implicit. The "agent inner lizard" surfaced in the over-decomposition anti-pattern ([`commit-and-branch.md`](commit-and-branch.md) §"Anti-patterns"). [`rpci.md`](rpci.md) §I — Implement mandates fresh-context-per-slice. *When violated:* the slice plan says "I'll figure out the shape as I go." *How to apply:* if a plan feels wrong, the plan is wrong; surface the concern in the slice plan's "Principle warnings" block. |
 | 62 | Don't Program by Coincidence | ✅ | §1.11 Program Deliberately | The per-adopter property-test gate (e.g. `internal/dates` dates property test) is the operational form. The CHANGELOG entry tone is "root cause: X; fix: Y" — never "happened to work." [`rpci.md`](rpci.md) §P — Plan mandates "Decisions to confirm" surfaced explicitly. *When violated:* a commit message that doesn't explain *why* the fix works. *How to apply:* the slice plan's "regression net" line names the test that proves the fix; a fix without that line is coincidence. |
 | 63 | Estimate the Order of Your Algorithms | ⚠️ | §1.12 Algorithm Speed | The per-addendum stress test (e.g. `TestStressEventAttachDetachRoundTrip` in the Go addendum) per-iter SQL footprint is the closest form. Not a stated rule for non-DB code paths. *When violated:* a function in the model's heavy paths (DB queries, batch ops, background jobs) whose doc-comment has no SQL footprint. *How to apply:* the doc-comment lists "O(N) reads, O(1) writes"; a doc-comment without the footprint is incomplete. |
 | 64 | Test Your Estimates | ✅ | §1.12 Algorithm Speed | Per-addendum stress-test directory (e.g. `tools/tune/stress/`) + per-adopter race-stress workflow (e.g. `.github/workflows/race-stress.yml`). The race-detector step is the live regression net that catches drift between the estimate and reality. *How to apply:* every slice that touches the model's heavy paths runs the stress suite locally before the PR opens. |
 | 65 | Refactor Early, Refactor Often | ✅ | §1.13 Refactoring | [`complexity.md`](complexity.md) is the operational form. The per-adopter Event Records refactor (sibling-table rename) is the canonical worked example. *How to apply:* the slice plan's "When to refactor" checklist (5 triggers: DRY violation, non-orthogonal, knowledge improved, requirements evolve, performance) — a slice that hits one trigger files the refactor as a sibling issue. |
-| 66 | Testing Is Not About Finding Bugs | ✅ | §1.13 Refactoring | The audit cadence is the operational form. Per-adopter audit cycles (e.g. the DixieData #531, #539, #540, #542 cluster) each surfaced a *class* of bug the tests themselves couldn't catch. *How to apply:* the audit probe (Playwright or analog) is the second test surface; a slice that passes unit tests but fails the smoke probe is incomplete. |
+| 66 | Testing Is Not About Finding Bugs | ✅ | §1.13 Refactoring | The audit cadence is the operational form. Per-adopter audit cycles repeatedly surface classes of bug the tests themselves could not catch. *How to apply:* the audit probe (browser automation or analog) is the second test surface; a slice that passes unit tests but fails the smoke probe is incomplete. |
 | 67 | A Test Is the First User of Your Code | ✅ | §1.13 Refactoring | [`tdd.md`](tdd.md) Step 1 is "RED: write the failing test first." Per-addendum RED + GREEN shipping as a single reviewable commit is the worked example. *How to apply:* the slice plan's first commit is the failing test; the second is the fix. A slice with no RED commit is not TDD. |
 | 68 | Build End-To-End, Not Top-Down or Bottom Up | ✅ | §1.4 Tracer Bullets | RPCI tracer-bullet slice 1 is the operational form. Every Tier 2 vertical slice crosses every layer (templ + htmx + JS + Go handler + DB). *When violated:* a "backend slice" that ships the handler but no UI, or a "frontend slice" that ships the templ but no handler. *How to apply:* the slice plan template requires both the apply-site URL and the smoke probe bullet; a plan without both is not Tier 2. |
 | 69 | Design to Test | ✅ | §1.11 Program Deliberately | [`addenda/go-htmx.md`](../addenda/go-htmx.md) HTMX-specific guard tests (architecture test + orphan-handler probe + smoke-probe per-apply-site contract) — three independent test surfaces. *How to apply:* a new handler without an audit probe entry is the violation; the audit probe is the test that catches the "handler returns 200 but renders nothing" bug class. |

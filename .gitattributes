@@ -1,0 +1,4 @@
+# Keep deterministic package checksums and executable scripts stable across
+# Windows, macOS, and Linux checkouts.
+skills/** text eol=lf
+scripts/*.sh text eol=lf

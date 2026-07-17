@@ -10,6 +10,20 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
 ## [Unreleased]
 
 ### Changed
+- `scripts/init.sh` - default Q5 selection is now
+  `pragmatic-programmer`; skill packages copy recursively so references
+  and scripts arrive with `SKILL.md`. Existing unmanaged project skills
+  are preserved, global name collisions warn, managed packages remain
+  idempotent, and `--uninit` removes only agent-stack-owned skills.
+- `scripts/test-pragmatic-bootstrap.sh` - scratch-target regression test
+  covering default package copy, references, manifest checksums,
+  idempotent re-bootstrap, and selective uninit.
+- `skills/SKILLS.md` and `scripts/dedupe-skills.sh` - implement advertised
+  complete-package checksum contract and effective `supersedes` overlap
+  reporting. Planned unshipped rows use `-`; shipped packages validate
+  against deterministic path-plus-LF-normalized-content SHA-256 values.
+- `.gitattributes` - pin bundled skill packages and shell scripts to LF
+  across platforms so bootstrap assets and checksums stay stable.
 - `core/pragmatic-principles.md` — port DixieData commit
   `3c4fbc0` corrections: (1) §6 tip-index drift fix (rows 53-79 had
   +4-position title drift; 4 canonical tips were missing — #52
@@ -59,6 +73,12 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
   enforcement-site ranking.
 
 ### Added
+- `skills/pragmatic-programmer/` - framework-native v2.0.0 hybrid skill,
+  default-installed by bootstrap. Preserves wondelai v1.4.0 trigger,
+  diagnostic, and progressive-disclosure ideas while routing principle
+  authority to `core/pragmatic-principles.md`. Adds Consult, Assess, and
+  Decide modes; evidence-weighted 10-point diagnostic with confidence;
+  principle crosswalk; upstream provenance; and MIT attribution.
 - `core/complexity.md` — principles doc pairing with `feature-protocol.md`
   §Module discipline and `session-protocol.md` Rule 3 (YAGNI). Reconciles
   the YAGNI ↔ Ousterhout tension with the net-complexity-gain test; covers
@@ -131,6 +151,11 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
   + ephemeral).
 
 ### Fixed
+- `core/bug-patterns.md`, `core/pragmatic-principles.md`, and
+  `core/tdd.md` - restore stack-agnostic core guard after recent docs
+  reintroduced desktop-runtime and source-repo examples. Examples now
+  describe generic host bindings, embedded browser processes, audit
+  cycles, and coverage scripts; `check-core-stack-agnostic.sh` passes.
 - `templates/AGENTS.md.tmpl` and `templates/CONTRIBUTING.md.tmpl`
   referenced a non-existent `docs/agents/issue-tracker.md` and
   a `vendor/agent-stack/core/` path the init script doesn't

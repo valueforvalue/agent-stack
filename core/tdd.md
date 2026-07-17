@@ -95,8 +95,8 @@ Apply a contract touch when a slice:
 
 A public seam includes an exported service method or helper,
 HTTP handler, DTO, typed builder, persistence boundary,
-framework-native adapter (HTMX endpoint, JSX component prop,
-Wails binding, etc.), and user-visible DOM interaction. Apply
+framework-native adapter (HTTP endpoint, component prop,
+desktop-host binding, etc.), and user-visible DOM interaction. Apply
 the rule to existing code when the slice materially touches
 that seam. Do not start a backlog-wide retrofit or expand a
 slice into unrelated code. Formatting, generated output,

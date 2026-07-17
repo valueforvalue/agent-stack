@@ -16,11 +16,13 @@ to any language or stack via addenda.
   drop in alongside.
 - **`issues/`** — GitHub issue framework: 6-axis label taxonomy,
   bug + feature templates, triage workflow.
-- **`skills/`** — bundled agent skills (curated subset). Each
-  carries a SKILLS.md manifest entry with provenance + version +
-  checksum. `scripts/dedupe-skills.sh` reports overlap with your
-  installed skill catalog so you can prune on a case-by-case
-  basis.
+- **`skills/`** - bundled agent skills (curated subset). Each
+  carries a SKILLS.md manifest entry with provenance, version, and
+  complete-package checksum. `pragmatic-programmer` ships by default
+  as executable interface to framework's principle spine.
+  `scripts/dedupe-skills.sh` validates packages and reports overlap
+  with installed skill catalogs so collisions can be resolved case by
+  case.
 - **`scripts/init.sh`** — bootstraps a target repo with the
   framework. Asks 6 questions, copies the right files, generates
   `FRAMEWORK_BOOTSTRAP.md`. Idempotent.
@@ -41,11 +43,42 @@ The init script is interactive. It asks:
 2. Branch model (single-branch default vs three-branch)
 3. Include issues scaffolding (GitHub labels + templates)
 4. Which addendum(s) to include
-5. Which bundled skills to include
+5. Which bundled skills to include (`pragmatic-programmer` by default;
+   enter `none` to skip)
 6. README tone (terse vs polished)
 
-Re-running it on an already-bootstrapped repo is safe — it
-only adds what's missing.
+Re-running it on an already-bootstrapped repo is safe - it
+only adds what's missing. Skill packages copy recursively, so bundled
+references and scripts arrive with `SKILL.md`. Agent-stack marks only
+packages it creates; `--uninit` removes those package directories. Back
+up local edits inside managed skill packages before uninitializing.
+Pre-existing project skills are never marked or removed.
+
+## Pragmatic Programmer skill
+
+Bootstrapped repos receive `.pi/skills/pragmatic-programmer/` by
+default. Pi exposes it as:
+
+```text
+/skill:pragmatic-programmer
+```
+
+Skill provides three modes: Consult, Assess, and Decide. It preserves
+upstream's broad craftsmanship triggers and evidence-based scoring,
+but treats `docs/agents/pragmatic-principles.md` as authoritative. This
+avoids maintaining duplicate copies of principle explanations.
+
+If same skill exists globally or under target `.agents/skills/`,
+bootstrap warns about collision and leaves existing copy untouched. Run:
+
+```bash
+bash scripts/dedupe-skills.sh --dry-run
+bash scripts/test-pragmatic-bootstrap.sh
+```
+
+Framework version is 2.0.0 because workflow and authority model differ
+from wondelai upstream v1.4.0. Attribution and upstream MIT license ship
+inside skill package.
 
 ## Why
 
@@ -68,9 +101,9 @@ MIT. See `LICENSE`.
 
 ## Status
 
-v0.1.0 scaffold. See `CHANGELOG.md`. The plan is in
-`PLAN.md`; the next slices (bundled skill bodies,
-additional addenda, MkDocs site) are listed there as stubs.
+v0.1.0 scaffold with first Slice 2 skill package shipped. See
+`CHANGELOG.md`. Remaining planned skill bodies, addenda, and docs site
+are listed in `PLAN.md`.
 
 ## References
 
