@@ -61,6 +61,12 @@ should hold itself to a higher bar than the framework floor.
       carries a doc comment + at least one passing test (per
       `../core/laws.md` §'Doc comments on exported
       identifiers').
+- [ ] **Test quality bar.** Every new test passes the
+      saboteur test (per `../core/testing-philosophy.md`
+      §'The cut checklist'): names a bug class, is not
+      duplicated by another test, is not a compile-time
+      check, can be made to fail by breaking the code. Tests
+      that fail the checklist are cut.
 - [ ] **Smoke probe per apply-site.** Every UI apply-site
       has a Playwright (or analog) probe that drives the live
       binary + asserts response shape + `page.url()` after

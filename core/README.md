@@ -23,6 +23,7 @@ These cross-cut every task. Load them once.
 | [`rpci.md`](rpci.md) | Non-trivial work (3+ files or design questions) |
 | [`complexity.md`](complexity.md) | Designing a new module, debating YAGNI vs broad interface, reviewing for strategic-programming correctness |
 | [`tdd.md`](tdd.md) | Any feature or bug fix |
+| [`testing-philosophy.md`](testing-philosophy.md) | Reviewing whether a test earns its place (which to keep, which to cut) |
 | [`feature-protocol.md`](feature-protocol.md) | Adding a feature |
 | [`code-changes.md`](code-changes.md) | Cross-layer change (view + framework attrs + JS + backend or analogous) |
 | [`bug-patterns.md`](bug-patterns.md) | Hunting a bug or reviewing a fix |

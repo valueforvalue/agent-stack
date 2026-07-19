@@ -9,6 +9,41 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
 
 ## [Unreleased]
 
+### Added
+- `core/testing-philosophy.md` — port DixieData commit
+  `8a0d3f1` (issue #626): the test-quality bar doc. Pairs
+  with `core/tdd.md` (process) to define the bar for which
+  tests earn their place. Principles: state coverage not
+  line coverage (Tip #65), saboteur test (Tip #64), find
+  bugs once (Tip #66), test your software (Tip #49), and
+  the Go-specific carve-out (compiler/lint/stdlib already
+  handle many guarantees). Includes the cut checklist, the
+  table-driven consolidation rule, and the brittle-test
+  mitigation. Cross-referenced from `core/tdd.md` (in
+  References), `core/README.md` (tier-1 table),
+  `core/pragmatic-principles.md` (§1.14 Code That's Easy
+  to Test + §3 cross-ref table + §5 References), and
+  `issues/feature-template.md` (new "Test quality bar"
+  acceptance-criteria checkbox).
+- `addenda/go-htmx.md` §'Go testing recipes' — Go-specific
+  recipes that meet `core/testing-philosophy.md` bar:
+  (1) `var _ Foo = bar` placement (package-level, not in
+  Test func), (2) `//go:build diag` build-tag convention
+  for diagnostic probes with `go test -tags=diag` invocation,
+  (3) table-driven consolidation with a worked example +
+  the "when NOT to consolidate" carve-out (HTMX guard tests
+  own different invariants so stay separate),
+  (4) mutation testing pointer to existing §'Mutation
+  testing', (5) stdlib re-test anti-pattern with three
+  concrete cut examples (sync.Map, strings.Contains,
+  fmt.Sprintf), (6) brittle-test mitigation in Go
+  (strings.Contains over ==, htmxattr.Mux allowlist over
+  string literals, byte-stable primitives only). New
+  section lands between §'Mutation testing' and §'References',
+  grouped with the other testing-adjacent sections.
+  `addenda/README.md` updated to mention Go testing recipes
+  in the v1 addenda summary.
+
 ### Changed
 - `scripts/init.sh` - default Q5 selection is now
   `pragmatic-programmer`; skill packages copy recursively so references
