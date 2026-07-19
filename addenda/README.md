@@ -10,7 +10,10 @@ general enough to live in `core/`.
 - [`go-htmx.md`](go-htmx.md) — Go backend + HTMX frontend +
   templ view templates + chi router + Wails / WebView2 host.
   This is the canonical addendum; covers dialog-guard law +
-  routebuilder / htmxattr / uiids pattern + bug catalog §1–§6.
+  routebuilder / htmxattr / uiids pattern + Go testing
+  recipes (var-_, build-tag diag, table-driven consolidation)
+  + bug catalog §1–§6 + mutation testing + HTMX-specific
+  guard tests.
 
 ## Loading
 

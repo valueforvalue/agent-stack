@@ -1067,6 +1067,142 @@ Don't try to mutate the entire `./...` in CI. The pattern:
 - Tip #92 in `../docs/audit/pragmatic-programmer-audit-2026-07.md`
   — the audit row this section closes
 
+## Go testing recipes
+
+> Sibling of [`../core/testing-philosophy.md`](../core/testing-philosophy.md).
+> The core doc gives the *bar* (which tests earn their place);
+> this section gives the *Go-specific recipes* that meet it.
+
+### 1. `var _ Foo = bar` is a declaration, not a test
+
+Per core §"Compile-time checks masquerading as runtime tests":
+package-level only. Never inside `func Test...`.
+
+```go
+// GOOD — package-level, zero runtime cost
+var _ render.Renderer = (*TemplView)(nil)
+
+func TestTemplView(t *testing.T) { ... }
+
+// BAD — inflates test count, runs `go test` machinery
+func TestImplementsRenderer(t *testing.T) {
+    var _ render.Renderer = (*TemplView)(nil)
+}
+```
+
+### 2. Build-tag convention for diagnostic probes
+
+Per core §"Diagnostic tests that always skip":
+file-existence / binary-built / env-var-gated tests live
+under `//go:build diag`.
+
+```go
+//go:build diag
+package mypkg
+
+func TestLiveBinarySmoke(t *testing.T) {
+    if _, err := os.Stat("bin/myapp.exe"); err != nil {
+        t.Skip("binary not built")
+    }
+    // ...
+}
+```
+
+Run with: `go test -tags=diag ./...`. The CI matrix runs
+both the default and `diag` suites on a schedule (not on
+every PR) to keep signal high and cost bounded.
+
+### 3. Table-driven consolidation for per-surface tests
+
+Per core §"Consolidation": N per-surface render or
+handler tests that share shape collapse into one
+table-driven test. The table IS the coverage map.
+
+```go
+func TestSurfaceIDs(t *testing.T) {
+    cases := []struct {
+        name string
+        path string
+        want []string
+    }{
+        {"landing", "/", []string{"#app", "#toast"}},
+        {"settings", "/settings", []string{"#app", "#settings-foldout"}},
+        // add a row per new surface, not a new func
+    }
+    for _, tc := range cases {
+        t.Run(tc.name, func(t *testing.T) {
+            rec := serveGET(tc.path)
+            for _, id := range tc.want {
+                if !strings.Contains(rec.Body.String(), id) {
+                    t.Errorf("missing surface %s", id)
+                }
+            }
+        })
+    }
+}
+```
+
+**When NOT to consolidate** (per core §"Consolidation"):
+each test exercises a genuinely different code path. The
+HTMX-specific guard tests in §"HTMX-specific guard tests"
+below are an example — each test owns a different invariant
+(route-table integrity vs response-shape contract vs swap
+re-binding), so they stay separate even though they all
+serve HTTP.
+
+### 4. Mutation testing
+
+Per core §"Test-the-tests" (Tip #64): `go-mutesting` is
+the Go-specific operational form. See §"Mutation testing"
+above for the workflow + `.mutesting.yaml`. The mutation
+score is the *complement* to line coverage: a test file at
+100% line coverage with a 20% mutation score is testing
+coverage inflation, not state coverage.
+
+### 5. Stdlib re-test anti-pattern
+
+Cut any test whose core assertion is "the stdlib function
+works as documented." Examples from the audit (issue
+#626):
+
+- Wrapping `sync.Map.LoadOrStore` and asserting the
+  documented return value — test the *wiring* (your code
+  calls `LoadOrStore` with the right key), not the
+  function itself.
+- Wrapping `strings.Contains` and asserting `true` for a
+  string that obviously contains the substring.
+- Wrapping `fmt.Sprintf` and asserting a known formatted
+  output.
+
+**Decision rule:** if you can replace the stdlib call in
+the test with the literal expected value and the test
+still passes, the test is testing the stdlib, not your
+code. Cut it.
+
+### 6. Brittle-test mitigation in Go
+
+Per core §"Brittle tests": assert on structural
+properties, not exact strings. In Go this usually means:
+
+- `strings.Contains(body, "data-theme=\"high-contrast\"")`
+  not `body == "<html lang=\"en\" data-theme=\"high-contrast\"...>"`.
+- Use the existing `htmxattr.Mux` allowlist rather than
+  asserting on rendered `hx-*` attribute strings.
+- For snapshot tests: pin the *byte-stable primitives*
+  (per `core/complexity.md` §1.10's imposed-duplication
+  carve-out), not the full render output of a screen.
+
+### References
+
+- [`../core/testing-philosophy.md`](../core/testing-philosophy.md)
+  — the bar this section implements
+- §"Mutation testing" above — `go-mutesting` workflow
+- §"HTMX-specific guard tests" below — already follows
+  the philosophy doc's "static checks → linters" rule
+- §"Exported Go identifiers carry doc comments" above —
+  the doc-comment floor the carve-outs in §1 and §5
+  depend on
+
 ## References
 
 - `../core/laws.md` — universal laws
