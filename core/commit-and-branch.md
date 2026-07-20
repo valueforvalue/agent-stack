@@ -1,5 +1,8 @@
 # Commits and Branches
 
+> **Tier-1.** Load before any commit (commit shape + branch
+> policy + closing issues). Not loaded at session start.
+
 Procedural contract for how changes land in a repo that adopts
 agent-stack. Adopting repos should copy this file (with
 project-specific edits) into their own `docs/agents/` or
