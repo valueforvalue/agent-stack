@@ -7,13 +7,22 @@ general enough to live in `core/`.
 
 ## v1 addenda
 
-- [`go-htmx.md`](go-htmx.md) — Go backend + HTMX frontend +
-  templ view templates + chi router + Wails / WebView2 host.
-  This is the canonical addendum; covers dialog-guard law +
-  routebuilder / htmxattr / uiids pattern + Go testing
-  recipes (var-_, build-tag diag, table-driven consolidation)
-  + bug catalog §1–§6 + mutation testing + HTMX-specific
-  guard tests.
+- [`go-htmx.md`](go-htmx.md) (Tier-1, ~460 lines) — Go backend
+  + HTMX frontend + templ view templates + chi router + Wails /
+  WebView2 host. The canonical addendum. Covers dialog-guard
+  law + routebuilder / htmxattr / uiids pattern + framework
+  quirks + Go testing recipes (var-_, build-tag diag,
+  table-driven consolidation) + HTMX-specific guard tests +
+  adopting-these-tests starter set. Loaded by default for any
+  Go-adopter session.
+- [`go-htmx-bug-catalog.md`](go-htmx-bug-catalog.md)
+  (Tier-2 reference, ~900 lines) — Companion bug catalog.
+  Bug catalog §1–§6 (per-layer patterns with `Find it:`
+  greps) + bug-class → first-place-to-look navigation table +
+  Security (govulncheck workflow) + Mutation testing
+  (go-mutesting workflow). Loaded on demand when chasing a
+  specific bug or running a per-layer audit, **not** at
+  session start.
 
 ## Loading
 

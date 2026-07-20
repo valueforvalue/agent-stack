@@ -12,7 +12,6 @@ These cross-cut every task. Load them once.
 |---|---|
 | [`session-protocol.md`](session-protocol.md) | Every agent session |
 | [`laws.md`](laws.md) | Before any code lands |
-| [`commit-and-branch.md`](commit-and-branch.md) | Before any commit |
 | [`docs-index-scheme.md`](docs-index-scheme.md) | When adopting the framework |
 | [`glossary-discipline.md`](glossary-discipline.md) | When adding domain terms |
 
@@ -24,6 +23,7 @@ These cross-cut every task. Load them once.
 | [`complexity.md`](complexity.md) | Designing a new module, debating YAGNI vs broad interface, reviewing for strategic-programming correctness |
 | [`tdd.md`](tdd.md) | Any feature or bug fix |
 | [`testing-philosophy.md`](testing-philosophy.md) | Reviewing whether a test earns its place (which to keep, which to cut) |
+| [`commit-and-branch.md`](commit-and-branch.md) | Before any commit (commit shape + branch policy + closing issues) |
 | [`feature-protocol.md`](feature-protocol.md) | Adding a feature |
 | [`code-changes.md`](code-changes.md) | Cross-layer change (view + framework attrs + JS + backend or analogous) |
 | [`bug-patterns.md`](bug-patterns.md) | Hunting a bug or reviewing a fix |
@@ -35,6 +35,12 @@ These cross-cut every task. Load them once.
 
 Per-addendum. Each `addenda/<stack>.md` file is its own tier-2
 doc. Load only the one that matches the target stack.
+
+A multi-file addendum (e.g. `addenda/go-htmx.md` + the
+companion `addenda/go-htmx-bug-catalog.md`) splits a Tier-1
+addendum from its Tier-2 reference catalog. Load the Tier-1
+addendum at session start; load the companion catalog only
+when chasing a specific bug or running a per-layer audit.
 
 ## How to use
 
