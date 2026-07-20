@@ -135,19 +135,6 @@ ADR:
 If the change is consistent with the ADR, the slice plan
 references the ADR number (`Refs ADR-0007`).
 
-## ADRs vs laws
-
-`core/laws.md` carries non-negotiable rules earned by real
-bugs. ADRs carry decisions that *might* have been different.
-The two files cross-reference each other:
-
-- **A law has an ADR.** ADR explains the trade-off the law
-  captured. The law itself is enforceable.
-- **An ADR's decision is promoted to a law** when a bug
-  ships that the ADR would have prevented ([`laws.md § Promoting
-  a rule to a law`](laws.md)). The ADR is the historical
-  anchor; the law is the enforceable rule.
-
 ## References
 
 - [`laws.md`](laws.md) — when an ADR promotes to a law

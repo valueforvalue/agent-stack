@@ -40,13 +40,6 @@ The avoid-list is the highest-leverage part. It catches
 contributors who reach for the wrong word because the
 intended meaning isn't obvious from the term alone.
 
-### Relationships section
-
-A separate section enumerates how terms relate to each
-other ("A Person Record has zero or more Source Records").
-This makes the glossary a mini-domain-model that survives
-feature additions.
-
 ### Example dialogue section
 
 A short section showing domain experts using the terms in

@@ -77,13 +77,6 @@ to load the full body or skim.**
 Examples: historical handoffs, resolved audits, past
 per-surface rendering reviews, old design discussions.
 
-## Retention
-
-Tier-2 docs are retained for traceability but not loaded
-by default. The retention rule typically caps at the latest
-3 rounds in the working tree; older rounds move to
-`docs/historical/`.
-
 ## How to use
 
 1. Read Tier-0 at session start. Stop. Do not load Tier-1 yet.
@@ -99,20 +92,12 @@ yet (open an issue with a "missing doc" label).
 
 ## Prompt-cache alignment
 
-Anthropic and OpenAI prompt caches both gate on exact
-prefix match — any change between sessions invalidates the
-cache ([KVFlow, NeurIPS 2025](https://arxiv.org/html/2507.07400v1)).
-The 3-tier model exploits this: pin Tier-0 at the prefix
-boundary so it caches maximally across sessions; let Tier-1
-vary per role behind a `cache_control` breakpoint; leave
-Tier-2 in the dynamic tail where it's not part of the
-cacheable prefix.
-
-If your harness supports per-doc cache markers, mark every
-Tier-0 doc with `cache_control: ephemeral`. Tier-1 docs
-that the maintainer updates frequently should NOT be
-cache-pinned; the cache-hit ratio drops to zero on any
-edit.
+Anthropic and OpenAI prompt caches gate on exact prefix
+match — any change invalidates the cache
+([KVFlow, NeurIPS 2025](https://arxiv.org/html/2507.07400v1)).
+The 3-tier model exploits this: Tier-0 at the prefix
+boundary (caches maximally), Tier-1 behind a breakpoint,
+Tier-2 in the dynamic tail.
 
 ## Adopting this pattern
 
