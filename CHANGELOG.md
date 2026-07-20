@@ -10,6 +10,80 @@ Commit subjects follow [Conventional Commits](https://www.conventionalcommits.or
 ## [Unreleased]
 
 ### Added
+- `docs/audit/pragmatic-tips-index-2026-07.md` (new) +
+  `docs/audit/threat-models.md` (new) — two on-demand
+  reference docs externalized from the spine. Tip index
+  holds §6/§7/§9 of `core/pragmatic-principles.md` (the
+  per-tip table + count summary + chapter cross-reference);
+  threat-models holds the §Authoritative cross-references
+  section of `core/bug-patterns.md` (MITRE CWE / OWASP
+  mapping table + 6 source citations).
+- `addenda/go-htmx-bug-catalog.md` (new, 900 lines) —
+  Tier-2 companion to `addenda/go-htmx.md`. Carries the
+  per-layer bug catalog §1–§6, Security (govulncheck
+  workflow), and Mutation testing (go-mutesting workflow).
+  Loaded on demand only; the Tier-1 addendum is what
+  agents load by default for Go-adopter sessions.
+
+### Changed
+- `core/pragmatic-principles.md` (1226 → 915 lines,
+  −311 / Tier-1 load) — §6/§7/§9 externalized to
+  `docs/audit/pragmatic-tips-index-2026-07.md`. Spine
+  now contains §1–§5 only (principles + book-end
+  checklists + cross-ref table + how-to-extend +
+  companion references). Bottom-of-doc pointer explains
+  when to load the externalized index.
+- `addenda/go-htmx.md` (1339 → 463 lines, −876 /
+  Tier-1 addendum load) — split into Tier-1 addendum
+  (Stack laws + Framework quirks + Go testing recipes +
+  HTMX guard tests + Adopting + References) + Tier-2
+  companion catalog (see Added above). Per-session
+  token savings for a Go-adopter session: ~5K tokens.
+- `core/bug-patterns.md` (380 → 345 lines, −35) —
+  §Authoritative cross-references externalized to
+  `docs/audit/threat-models.md`. The §1.5 / §1.10 /
+  etc. inline CWE / OWASP refs that map directly to
+  per-pattern fix recipes stay where they are.
+- `core/README.md` — Tier-0 table drops commit-and-branch
+  (now Tier-1); Tier-2 section gains a paragraph explaining
+  the multi-file addendum pattern.
+- `core/commit-and-branch.md` — Tier-1 header declaration
+  added ("Tier-1. Load before any commit ...").
+- `core/docs-index-scheme.md` — §Retention (placeholder,
+  no current enforcer) deleted. §Prompt-cache alignment
+  trimmed 16 → 7 lines (kept the "why"; dropped the
+  per-harness implementation guidance).
+- `core/glossary-discipline.md` — §Relationships section
+  (placeholder, no pattern) deleted.
+- `core/adr-discipline.md` — §ADRs vs laws (restated
+  core/laws.md "Promoting a rule to a law" content)
+  deleted.
+- `core/testing-philosophy.md` — §Relationship to TDD
+  tightened from 14 → 9 lines. Named tdd.md
+  §Anti-patterns as the named-violation list with a
+  direct link.
+- `addenda/README.md` — v1 addenda section split into
+  two bullets (Tier-1 addendum + Tier-2 catalog), each
+  carrying its tier + line count + contents.
+
+### Notes
+- Total per-session savings: ~6.5K tokens (~30% of the
+  Tier-0 + Tier-1 footprint for a Go-adopter session).
+- The substantive overlap between `core/tdd.md` (TDD
+  process) and `core/testing-philosophy.md` (quality
+  bar) is structural — they play distinct roles. Moved
+  sections would have broken the RED-step context in
+  tdd.md and orphaned the cross-references. Kept the
+  structure; tightened only the section that asked for
+  clarification.
+- The framework is now closer to its claimed 2K-token
+  Tier-0 ceiling. Tier-0 still ships 4 docs but they're
+  the ones that actually cross-cut every session
+  (session-protocol + laws + docs-index-scheme +
+  glossary-discipline); commit-and-branch moved to
+  task-time load.
+
+### Added (historical)
 - `core/testing-philosophy.md` — port DixieData commit
   `8a0d3f1` (issue #626): the test-quality bar doc. Pairs
   with `core/tdd.md` (process) to define the bar for which
